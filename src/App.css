@@ -35,6 +35,10 @@
   width: 40%;
 }
 
+.App-statusArea {
+  width: 80%;
+}
+
 .App-totalsArea {
   width: 80%;
   padding-top: 24px;

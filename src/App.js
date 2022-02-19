@@ -6,6 +6,7 @@ class App extends Component {
     let value = 'a - b 51, dog 3\nb - dog 2\nc - a 5\ndog - c 3'
     this.state = {
       ...App.updateResult(value),
+      status: 'ok',
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -41,7 +42,7 @@ class App extends Component {
   static describe(node) {
     let connectionString = ''
     for (const connection of node.connections) {
-      connectionString += `[${connection.destination} : ${connection.length}] `
+      connectionString += `[${connection.destination} ↻ ${connection.length}] `
     }
     const out = `${node.name} ➤ ${connectionString}\n`
     return out
@@ -98,6 +99,16 @@ class App extends Component {
               type="text"
               value={this.state.output}
               onScroll={this.handleScroll}
+              readOnly
+            />
+          </form>
+          <form>
+          <textarea
+              ref="status"
+              className="App-statusArea App-textArea"
+              rows={8}
+              type="text"
+              value={this.state.status}
               readOnly
             />
           </form>
