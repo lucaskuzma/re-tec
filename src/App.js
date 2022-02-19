@@ -5,14 +5,10 @@ class App extends Component {
     super(props)
     let value = 'a - b 51, dog 3\nb - dog 2\nc - a 5\ndog - c 3'
     this.state = {
-      // scrollTop: 0,
       ...App.updateResult(value),
     };
 
     this.handleChange = this.handleChange.bind(this);
-    // this.copyToClipboard = this.copyToClipboard.bind(this);
-    // this.handleScroll = this.handleScroll.bind(this);
-    // this.createMarkup = this.createMarkup.bind(this);
   }
 
   handleChange(event) {
@@ -46,7 +42,7 @@ class App extends Component {
   }
 
   static updateResult(text) {
-    let lineCount = 1; // rough estimate of lines + line wraps to calculate entry height
+    let lineCount = 1; // rough estimate of lines
 
     let lines = text.split('\n');
     let output = ''
@@ -57,7 +53,6 @@ class App extends Component {
       
       output += this.parse(line)
     }
-    // let output = text;
 
     return {
       value: text,
@@ -77,7 +72,6 @@ class App extends Component {
               rows={this.state.rows}
               type="text"
               value={this.state.value}
-              // rows={40}
               onScroll={this.handleScroll}
               onChange={this.handleChange}
             />
@@ -86,7 +80,6 @@ class App extends Component {
               className="App-outputArea App-textArea"
               rows={this.state.rows}
               type="text"
-              // rows={40}
               value={this.state.output}
               onScroll={this.handleScroll}
               readOnly
