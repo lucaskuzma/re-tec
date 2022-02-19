@@ -10,7 +10,6 @@ class App extends Component {
       ...App.updateResult(value),
       status: 'ok',
       time: 0,
-      neurons: [],
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -72,8 +71,8 @@ class App extends Component {
     // split input into lines
     let lines = text.split('\n');
 
-    // clear
-    // this.state.neurons = []
+    // init
+    let neurons = []
     let output = ''
 
     // for each line
@@ -82,7 +81,7 @@ class App extends Component {
 
       // parse string into neuron
       const neuron = this.parse(line)
-      // this.state.neurons += neuron
+      neurons.push(neuron)
 
       // print neuron
       output += this.describe(neuron)
@@ -92,6 +91,7 @@ class App extends Component {
       value: text,
       output: output,
       rows: lineCount,
+      neurons: neurons,
     }
   }
 
@@ -134,9 +134,7 @@ class App extends Component {
         </div>
 
         <div>
-          {this.state.neurons.map((value, index) => {
-            return <Neuron props={value}/>
-          })}
+          {this.state.neurons.map(neuron => <p>{neuron.name}</p>)}
         </div>
       </div>
     )
