@@ -7,9 +7,24 @@ class App extends Component {
     this.state = {
       ...App.updateResult(value),
       status: 'ok',
+      time: 0,
     };
 
     this.handleChange = this.handleChange.bind(this);
+    this.tick = this.tick.bind(this);
+  }
+
+  componentDidMount() {
+    this.timer = setInterval(this.tick, 100)
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.timer)
+  }
+
+  tick() {
+    this.setState({time: this.state.time + 1})
+    this.setState({status: this.state.time})
   }
 
   handleChange(event) {
@@ -84,7 +99,6 @@ class App extends Component {
         <div className="center">
           <form>
             <textarea
-              ref="entry"
               className="App-entryArea App-textArea"
               rows={this.state.rows}
               type="text"
@@ -93,7 +107,6 @@ class App extends Component {
               onChange={this.handleChange}
             />
             <textarea
-              ref="output"
               className="App-outputArea App-textArea"
               rows={this.state.rows}
               type="text"
@@ -104,7 +117,6 @@ class App extends Component {
           </form>
           <form>
           <textarea
-              ref="status"
               className="App-statusArea App-textArea"
               rows={8}
               type="text"
