@@ -18,40 +18,51 @@ class App extends Component {
   }
 
   static parse(line) {
+    let node = {}
     const regex = /(\w+)\s*-\s*(.*)/
     const match = regex.exec(line);
-    let out = 'empty\n'
     if (match) {
-      const name = match[1]
-      const connections = match[2]
-      
-      let connectionString = ''
-      for (const connection of connections.split(',')) {
-        const trimmed = connection.trim()
+      node.name = match[1]
+      node.connections = []
+      let connections = match[2]      
+      for (const connectionString of connections.split(',')) {
+        const trimmed = connectionString.trim()
         const regex = /(\w+)\s*(\d+)/
-        const match = regex.exec(connection);
-        const destination = match[1]
-        const length = match[2]
-        connectionString += `[${destination} : ${length}] `
+        const match = regex.exec(connectionString)
+        const connection = {}
+        connection.destination = match[1]
+        connection.length = match[2]
+        node.connections.push(connection) 
       }
-
-      out = `${name} ➤ ${connectionString}\n`
-      console.log(match)
     }
+    return node
+  }
+
+  static describe(node) {
+    let connectionString = ''
+    for (const connection of node.connections) {
+      connectionString += `[${connection.destination} : ${connection.length}] `
+    }
+    const out = `${node.name} ➤ ${connectionString}\n`
     return out
   }
 
   static updateResult(text) {
     let lineCount = 1; // rough estimate of lines
 
+    // split input into lines
     let lines = text.split('\n');
-    let output = ''
-    for(let i = 0; i < lines.length; i++) {
-      const line = lines[i];
 
+    // for each line
+    let output = ''
+    for (const line of lines) {
       lineCount += 1 + Math.floor(line.length / 38);
-      
-      output += this.parse(line)
+
+      // parse string into node
+      const node = this.parse(line)
+
+      // print node
+      output += this.describe(node)
     }
 
     return {
@@ -64,6 +75,11 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+        <div className="App-instructions">
+          <p>
+            {/* <strong><a class="title" href="?e=">re-TEC</a></strong> */}
+          </p>
+        </div>
         <div className="center">
           <form>
             <textarea
