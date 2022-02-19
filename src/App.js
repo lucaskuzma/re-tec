@@ -1,5 +1,7 @@
 import './App.css';
 import { Component } from 'react';
+import Neuron from './Neuron'
+
 class App extends Component {
   constructor(props) {
     super(props)
@@ -8,6 +10,7 @@ class App extends Component {
       ...App.updateResult(value),
       status: 'ok',
       time: 0,
+      neurons: [],
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -15,7 +18,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.timer = setInterval(this.tick, 100)
+    this.timer = setInterval(this.tick, 1000)
   }
 
   componentWillUnmount() {
@@ -34,12 +37,12 @@ class App extends Component {
   }
 
   static parse(line) {
-    let node = {}
+    let neuron = {}
     const regex = /(\w+)\s*-\s*(.*)/
     const match = regex.exec(line);
     if (match) {
-      node.name = match[1]
-      node.connections = []
+      neuron.name = match[1]
+      neuron.connections = []
       let connections = match[2]      
       for (const connectionString of connections.split(',')) {
         const trimmed = connectionString.trim()
@@ -48,18 +51,18 @@ class App extends Component {
         const connection = {}
         connection.destination = match[1]
         connection.length = match[2]
-        node.connections.push(connection) 
+        neuron.connections.push(connection) 
       }
     }
-    return node
+    return neuron
   }
 
-  static describe(node) {
+  static describe(neuron) {
     let connectionString = ''
-    for (const connection of node.connections) {
+    for (const connection of neuron.connections) {
       connectionString += `[${connection.destination} ↻ ${connection.length}] `
     }
-    const out = `${node.name} ➤ ${connectionString}\n`
+    const out = `${neuron.name} ➤ ${connectionString}\n`
     return out
   }
 
@@ -69,16 +72,20 @@ class App extends Component {
     // split input into lines
     let lines = text.split('\n');
 
-    // for each line
+    // clear
+    // this.state.neurons = []
     let output = ''
+
+    // for each line
     for (const line of lines) {
       lineCount += 1 + Math.floor(line.length / 38);
 
-      // parse string into node
-      const node = this.parse(line)
+      // parse string into neuron
+      const neuron = this.parse(line)
+      // this.state.neurons += neuron
 
-      // print node
-      output += this.describe(node)
+      // print neuron
+      output += this.describe(neuron)
     }
 
     return {
@@ -125,9 +132,15 @@ class App extends Component {
             />
           </form>
         </div>
+
+        <div>
+          {this.state.neurons.map((value, index) => {
+            return <Neuron props={value}/>
+          })}
+        </div>
       </div>
     )
   }
 }
 
-export default App;
+export default App
