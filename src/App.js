@@ -133,8 +133,8 @@ class App extends Component {
           </form>
         </div>
 
-        <div>
-          {this.state.neurons.map(neuron => <p>{neuron.name}</p>)}
+        <div className='App-neuronArea'>
+          {this.state.neurons.map(neuron => <Neuron key={neuron.name} neuron={neuron}/>)}
         </div>
       </div>
     )

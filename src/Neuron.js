@@ -1,4 +1,6 @@
-import { Component } from "react";
+import { Component } from 'react';
+import Connection from './Connection';
+import './Neuron.css'
 
 class Neuron extends Component {
     constructor(props) {
@@ -7,14 +9,14 @@ class Neuron extends Component {
     }
 
     tick() {
-        
+
     }
 
     render() {
         return (
-            <div className="Neuron">
-                Hello
-                { this.props }
+            <div className='Neuron'>
+                🧠 {this.props.neuron.name}
+                {this.props.neuron.connections.map(connection => <Connection key={connection.destination} connection={connection}/>)}
             </div>
         )
     }

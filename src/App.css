@@ -1,5 +1,5 @@
-.App {
-}
+/* .App {
+} */
 
 .App-instructions {
   width: 80%;
@@ -39,20 +39,12 @@
   width: 80%;
 }
 
-.App-totalsArea {
+.App-neuronArea {
   width: 80%;
   padding-top: 24px;
   padding-bottom: 36px;
   padding-left: 10%;
   white-space: pre;
-}
-
-.App-colophon {
-  padding-top: 24px;
-}
-
-.App-examples {
-  margin-top: 24px;
 }
 
 .App-list li {
