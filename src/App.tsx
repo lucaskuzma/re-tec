@@ -5,6 +5,7 @@ import NeuronComponent from './NeuronComponent'
 type Connection = {
   destination: string
   length: number
+  progress: number
 }
 
 type Neuron = {
@@ -37,7 +38,7 @@ class App extends Component {
 
   constructor(props) {
     super(props)
-    let value = 'a 4 - b 51, d 3\nb 3 - d 2\nc 5 - a 5\nd 8 - c 3'
+    let value = 'a 7 - b 9, d 3\nb 3 - d 2\nc 5 - a 5\nd 8 - c 3'
     this.state = {
       ...App.parseInput(value),
       status: 'ok',
@@ -60,14 +61,37 @@ class App extends Component {
     this.setState({time: this.state.time + 1})
     this.setState({status: this.state.time})
 
-    this.state.neurons.forEach((neuron, k) => {
-      neuron.activation++
-      if (neuron.activation == neuron.threshold) {
+    // make `a` an autostimulated "sensor"
+    let sensor = this.state.neurons.get('a')
+    sensor.activation++
+
+    this.state.neurons.forEach(neuron => {
+      if (neuron.activation >= neuron.threshold) {
+        // if threshold reached, fire
         neuron.firing = true
         neuron.activation = 0
+        neuron.connections.forEach(connection => {
+          // start any unstarted connections
+          if (connection.progress == 0) {
+            connection.progress = 1
+          }
+        })
       } else {
+        // otherwise stop firing
         neuron.firing = false
       }
+      neuron.connections.forEach(connection => {
+        if (connection.progress > 0) {
+          // progress any started connections
+          connection.progress++
+        }
+        if (connection.progress == connection.length) {
+          // if lenfth reached, trigger target
+          connection.progress = 0
+          let destination = this.state.neurons.get(connection.destination)
+          destination.activation++
+        }
+      })
     })
   }
 
@@ -99,6 +123,7 @@ class App extends Component {
         const connection = {
           destination: match[1],
           length: parseInt(match[2]),
+          progress: 0,
         } as Connection
         neuron.connections.push(connection) 
       }

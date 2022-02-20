@@ -15,7 +15,7 @@ class NeuronComponent extends Component {
     render() {
         return (
             <div className='Neuron'>
-                🧠 {this.props.neuron.name} {this.props.neuron.threshold} ↻ {this.props.neuron.activation}
+                🧠 {this.props.neuron.name} {this.props.neuron.threshold} α {this.props.neuron.activation}
                 {this.props.neuron.firing &&
                     <span> 🔥</span>
                 }

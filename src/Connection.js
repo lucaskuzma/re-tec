@@ -13,7 +13,7 @@ class Connection extends Component {
     render() {
         return (
             <div className="Connection">
-                ➤ {this.props.connection.destination} ↻ {this.props.connection.length}
+                ➤ {this.props.connection.destination} ↻ {this.props.connection.length} α {this.props.connection.progress}
             </div>
         )
     }
