@@ -46,7 +46,7 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.synth = new Tone.PolySynth().toDestination()
-    let value = 'a 9 - b 9, e 11\nb 3 - e 7, f 4\nc 5 - a 5\nd 9 - a 2, c 6\ne 8 - c 3, g 9\nf 3 - c 5\ng 5 - b 5 c 8'
+    let value = 'a 3 - b 9, e 2\nb 3 - e 24, f 4\nc 5 - a 7, d 3, a 17\nd 2 - a 2, c 1\ne 6 - c 3, g 29\nf 3 - c 5\ng 5 - b 5 c 8'
     this.state = {
       ...App.parseInput(value),
       status: 'ok',
@@ -58,10 +58,15 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.timer = setInterval(this.tick, 50)
+    this.timer = setInterval(this.tick, 250)
     
     // let sensor = this.state.neurons.get('a')
     // sensor.activation = sensor.threshold
+
+    // fire each neuron once
+    // this.state.neurons.forEach(neuron => {
+    //   neuron.activation = neuron.threshold + 1
+    // })
   }
 
   componentWillUnmount() {
@@ -74,6 +79,7 @@ class App extends Component {
 
     // make `a` an autostimulated "sensor"
     // let sensor = this.state.neurons.get('a')
+    // let sensor = this.state.neurons.get('g')
     // let sensor = this.state.neurons.get('abcdefg'.charAt(Math.random() * 7))
     let sensor = this.state.neurons.get('abcdefg'.charAt(this.state.time % 7))
     sensor.activation++
@@ -90,8 +96,8 @@ class App extends Component {
             key: Math.random(),
           })
         })
-        const note = neuron.name + '4'
-        this.synth.triggerAttackRelease(note, '8n');
+        const note = neuron.name + '3'
+        this.synth.triggerAttackRelease(note, '2n');
       } else {
         // otherwise stop firing
         neuron.firing = false
