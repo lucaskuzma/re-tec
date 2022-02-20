@@ -1,11 +1,17 @@
 import './App.css';
 import { Component } from 'react';
 import NeuronComponent from './NeuronComponent'
+import { sign } from 'core-js/core/number';
+
+type Signal = {
+  progress: number
+  key: number
+}
 
 type Connection = {
   destination: string
   length: number
-  progress: number
+  signals: Array<Signal>,
 }
 
 type Neuron = {
@@ -71,26 +77,29 @@ class App extends Component {
         neuron.firing = true
         neuron.activation = 0
         neuron.connections.forEach(connection => {
-          // start any unstarted connections
-          if (connection.progress == 0) {
-            connection.progress = 1
-          }
+          // add signal to connection
+          connection.signals.push({
+            progress: 0,
+            key: Math.random(),
+          })
         })
       } else {
         // otherwise stop firing
         neuron.firing = false
       }
+
       neuron.connections.forEach(connection => {
-        if (connection.progress > 0) {
-          // progress any started connections
-          connection.progress++
-        }
-        if (connection.progress == connection.length) {
-          // if lenfth reached, trigger target
-          connection.progress = 0
-          let destination = this.state.neurons.get(connection.destination)
-          destination.activation++
-        }
+        connection.signals.forEach(signal => {
+          signal.progress++
+          if (signal.progress > connection.length) {
+            // activate destination
+            let destination = this.state.neurons.get(connection.destination)
+            destination.activation++
+            // flag for deletion
+            signal.progress = -1
+          }
+        })
+        connection.signals = connection.signals.filter(signal => signal.progress >= 0)
       })
     })
   }
@@ -123,7 +132,7 @@ class App extends Component {
         const connection = {
           destination: match[1],
           length: parseInt(match[2]),
-          progress: 0,
+          signals: new Array(),
         } as Connection
         neuron.connections.push(connection) 
       }
