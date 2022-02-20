@@ -41,12 +41,12 @@ class App extends Component {
     output: '',
     neurons: new Map<string, Neuron>(),
   }
-  synth: Tone.MembraneSynth
+  synth: Tone.PolySynth
 
   constructor(props) {
     super(props)
-    this.synth = new Tone.MembraneSynth().toDestination()
-    let value = 'a 3 - b 9, e 11\nb 3 - e 2, f 4\nc 5 - a 5\ne 8 - c 3\nf 3 - c 5'
+    this.synth = new Tone.PolySynth().toDestination()
+    let value = 'a 9 - b 9, e 11\nb 3 - e 7, f 4\nc 5 - a 5\nd 9 - a 2, c 6\ne 8 - c 3, g 9\nf 3 - c 5\ng 5 - b 5 c 8'
     this.state = {
       ...App.parseInput(value),
       status: 'ok',
@@ -58,7 +58,10 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.timer = setInterval(this.tick, 250)
+    this.timer = setInterval(this.tick, 50)
+    
+    // let sensor = this.state.neurons.get('a')
+    // sensor.activation = sensor.threshold
   }
 
   componentWillUnmount() {
@@ -70,7 +73,9 @@ class App extends Component {
     this.setState({status: this.state.time})
 
     // make `a` an autostimulated "sensor"
-    let sensor = this.state.neurons.get('a')
+    // let sensor = this.state.neurons.get('a')
+    // let sensor = this.state.neurons.get('abcdefg'.charAt(Math.random() * 7))
+    let sensor = this.state.neurons.get('abcdefg'.charAt(this.state.time % 7))
     sensor.activation++
 
     this.state.neurons.forEach(neuron => {
@@ -218,7 +223,7 @@ class App extends Component {
           <form>
           <textarea
               className="App-statusArea App-textArea"
-              rows={8}
+              rows={4}
               // type="text"
               value={this.state.status}
               readOnly
