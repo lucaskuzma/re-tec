@@ -1,8 +1,37 @@
 import './App.css';
 import { Component } from 'react';
-import Neuron from './Neuron'
+import NeuronComponent from './NeuronComponent'
+
+type Connection = {
+  destination: string
+  length: number
+}
+
+type Neuron = {
+  name: string
+  connections: Array<Connection>
+}
+
+type State = {
+  status: string,
+  time: number,
+  rows: number,
+  value: string,
+  output: string,
+  neurons: Array<Neuron>,
+}
 
 class App extends Component {
+  timer: NodeJS.Timer;
+  state: State = {
+    status: '',
+    time: 0,
+    rows: 0,
+    value: '',
+    output: '',
+    neurons: [] as Neuron[],
+  }
+
   constructor(props) {
     super(props)
     let value = 'a - b 51, dog 3\nb - dog 2\nc - a 5\ndog - c 3'
@@ -10,7 +39,7 @@ class App extends Component {
       ...App.updateResult(value),
       status: 'ok',
       time: 0,
-    };
+    }
 
     this.handleChange = this.handleChange.bind(this);
     this.tick = this.tick.bind(this);
@@ -35,11 +64,15 @@ class App extends Component {
     )
   }
 
-  static parse(line) {
-    let neuron = {}
+  static parse(line: string) : Neuron | undefined {
+    let neuron: Neuron | undefined
     const regex = /(\w+)\s*-\s*(.*)/
     const match = regex.exec(line);
     if (match) {
+      neuron = {
+        name: match[1],
+        connections: [] as Connection[],
+      }
       neuron.name = match[1]
       neuron.connections = []
       let connections = match[2]      
@@ -47,9 +80,10 @@ class App extends Component {
         const trimmed = connectionString.trim()
         const regex = /(\w+)\s*(\d+)/
         const match = regex.exec(connectionString)
-        const connection = {}
-        connection.destination = match[1]
-        connection.length = match[2]
+        const connection = {
+          destination: match[1],
+          length: parseInt(match[2]),
+        } as Connection
         neuron.connections.push(connection) 
       }
     }
@@ -108,17 +142,17 @@ class App extends Component {
             <textarea
               className="App-entryArea App-textArea"
               rows={this.state.rows}
-              type="text"
+              // type="text"
               value={this.state.value}
-              onScroll={this.handleScroll}
+              // onScroll={this.handleScroll}
               onChange={this.handleChange}
             />
             <textarea
               className="App-outputArea App-textArea"
               rows={this.state.rows}
-              type="text"
+              // type="text"
               value={this.state.output}
-              onScroll={this.handleScroll}
+              // onScroll={this.handleScroll}
               readOnly
             />
           </form>
@@ -126,7 +160,7 @@ class App extends Component {
           <textarea
               className="App-statusArea App-textArea"
               rows={8}
-              type="text"
+              // type="text"
               value={this.state.status}
               readOnly
             />
@@ -134,7 +168,7 @@ class App extends Component {
         </div>
 
         <div className='App-neuronArea'>
-          {this.state.neurons.map(neuron => <Neuron key={neuron.name} neuron={neuron}/>)}
+          {this.state.neurons.map(neuron => <NeuronComponent key={neuron.name} neuron={neuron}/>)}
         </div>
       </div>
     )

@@ -1,8 +1,8 @@
 import { Component } from 'react';
 import Connection from './Connection';
-import './Neuron.css'
+import './NeuronComponent.css'
 
-class Neuron extends Component {
+class NeuronComponent extends Component {
     constructor(props) {
         super(props)
         this.tick = this.tick.bind(this);
@@ -22,4 +22,4 @@ class Neuron extends Component {
     }
 }
 
-export default Neuron
+export default NeuronComponent
