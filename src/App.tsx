@@ -18,7 +18,7 @@ type State = {
   rows: number,
   value: string,
   output: string,
-  neurons: Array<Neuron>,
+  neurons: Map<string, Neuron>,
 }
 
 class App extends Component {
@@ -29,14 +29,14 @@ class App extends Component {
     rows: 0,
     value: '',
     output: '',
-    neurons: [] as Neuron[],
+    neurons: new Map<string, Neuron>(),
   }
 
   constructor(props) {
     super(props)
     let value = 'a - b 51, dog 3\nb - dog 2\nc - a 5\ndog - c 3'
     this.state = {
-      ...App.updateResult(value),
+      ...App.parseInput(value),
       status: 'ok',
       time: 0,
     }
@@ -60,7 +60,7 @@ class App extends Component {
 
   handleChange(event) {
     this.setState(
-      App.updateResult(event.target.value)
+      App.parseInput(event.target.value)
     )
   }
 
@@ -90,7 +90,7 @@ class App extends Component {
     return neuron
   }
 
-  static describe(neuron) {
+  static describe(neuron: Neuron) {
     let connectionString = ''
     for (const connection of neuron.connections) {
       connectionString += `[${connection.destination} ↻ ${connection.length}] `
@@ -99,14 +99,14 @@ class App extends Component {
     return out
   }
 
-  static updateResult(text) {
+  static parseInput(text: string) {
     let lineCount = 1; // rough estimate of lines
 
     // split input into lines
     let lines = text.split('\n');
 
     // init
-    let neurons = []
+    let neurons = new Map<string, Neuron>()
     let output = ''
 
     // for each line
@@ -115,7 +115,7 @@ class App extends Component {
 
       // parse string into neuron
       const neuron = this.parse(line)
-      neurons.push(neuron)
+      neurons.set(neuron.name, neuron)
 
       // print neuron
       output += this.describe(neuron)
@@ -130,6 +130,7 @@ class App extends Component {
   }
 
   render() {
+    const neurons = this.state.neurons.forEach((v, k) => <NeuronComponent key={k} neuron={v}/>)
     return (
       <div className="App">
         <div className="App-instructions">
@@ -168,7 +169,7 @@ class App extends Component {
         </div>
 
         <div className='App-neuronArea'>
-          {this.state.neurons.map(neuron => <NeuronComponent key={neuron.name} neuron={neuron}/>)}
+          {Array.from(this.state.neurons.values()).map((v, k) => <NeuronComponent key={k} neuron={v}/>)}
         </div>
       </div>
     )
