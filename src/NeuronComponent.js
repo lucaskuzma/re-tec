@@ -15,10 +15,9 @@ class NeuronComponent extends Component {
     render() {
         return (
             <div className='Neuron'>
-                🧠 {this.props.neuron.name} {this.props.neuron.threshold} α {this.props.neuron.activation}
-                {this.props.neuron.firing &&
-                    <span> 🔥</span>
-                }
+                {this.props.neuron.firing ? <span>🔥</span> : <span>🧠</span>} {this.props.neuron.name} {this.props.neuron.threshold} α {this.props.neuron.activation}
+                &nbsp;[{'.'.repeat(this.props.neuron.activation)}
+                {' '.repeat(this.props.neuron.threshold - this.props.neuron.activation)}]
                 {this.props.neuron.connections.map(connection => <Connection key={connection.destination} connection={connection}/>)}
             </div>
         )
