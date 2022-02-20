@@ -1,7 +1,7 @@
 import './App.css';
 import { Component } from 'react';
 import NeuronComponent from './NeuronComponent'
-import { sign } from 'core-js/core/number';
+import * as Tone from 'tone'
 
 type Signal = {
   progress: number
@@ -41,10 +41,12 @@ class App extends Component {
     output: '',
     neurons: new Map<string, Neuron>(),
   }
+  synth: Tone.MembraneSynth
 
   constructor(props) {
     super(props)
-    let value = 'a 7 - b 9, d 3\nb 3 - d 2\nc 5 - a 5\nd 8 - c 3'
+    this.synth = new Tone.MembraneSynth().toDestination()
+    let value = 'a 3 - b 9, d 3\nb 3 - d 2, e 4\nc 5 - a 5\nd 8 - c 3\ne 3 - c 5'
     this.state = {
       ...App.parseInput(value),
       status: 'ok',
@@ -83,6 +85,8 @@ class App extends Component {
             key: Math.random(),
           })
         })
+        const note = neuron.name + '4'
+        // this.synth.triggerAttackRelease(note, '8n');
       } else {
         // otherwise stop firing
         neuron.firing = false
@@ -108,6 +112,7 @@ class App extends Component {
     this.setState(
       App.parseInput(event.target.value)
     )
+    Tone.start()
   }
 
   static parse(line: string) : Neuron | undefined {
@@ -128,11 +133,11 @@ class App extends Component {
       for (const connectionString of connections.split(',')) {
         const trimmed = connectionString.trim()
         const regex = /(\w+)\s*(\d+)/
-        const match = regex.exec(connectionString)
+        const match = regex.exec(trimmed)
         const connection = {
           destination: match[1],
           length: parseInt(match[2]),
-          signals: new Array(),
+          signals: [],
         } as Connection
         neuron.connections.push(connection) 
       }
