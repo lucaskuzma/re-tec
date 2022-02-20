@@ -10,6 +10,8 @@ type Connection = {
 type Neuron = {
   name: string
   threshold: number
+  activation: number
+  firing: boolean
   connections: Array<Connection>
 }
 
@@ -35,7 +37,7 @@ class App extends Component {
 
   constructor(props) {
     super(props)
-    let value = 'a 4 - b 51, dog 3\nb 3 - dog 2\nc 5 - a 5\ndog 8 - c 3'
+    let value = 'a 4 - b 51, d 3\nb 3 - d 2\nc 5 - a 5\nd 8 - c 3'
     this.state = {
       ...App.parseInput(value),
       status: 'ok',
@@ -47,7 +49,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.timer = setInterval(this.tick, 1000)
+    this.timer = setInterval(this.tick, 250)
   }
 
   componentWillUnmount() {
@@ -57,6 +59,16 @@ class App extends Component {
   tick() {
     this.setState({time: this.state.time + 1})
     this.setState({status: this.state.time})
+
+    this.state.neurons.forEach((neuron, k) => {
+      neuron.activation++
+      if (neuron.activation == neuron.threshold) {
+        neuron.firing = true
+        neuron.activation = 0
+      } else {
+        neuron.firing = false
+      }
+    })
   }
 
   handleChange(event) {
@@ -73,6 +85,8 @@ class App extends Component {
       neuron = {
         name: match[1],
         threshold: parseInt(match[2]),
+        activation: 0,
+        firing: false,
         connections: [] as Connection[],
       }
       neuron.name = match[1]
@@ -116,7 +130,11 @@ class App extends Component {
       lineCount += 1 + Math.floor(line.length / 38);
 
       // parse string into neuron
-      const neuron = this.parse(line)
+      let neuron = this.parse(line)
+      let existing = neurons.get(neuron.name)
+      if (existing) {
+        neuron.activation = existing.activation
+      }
       neurons.set(neuron.name, neuron)
 
       // print neuron
