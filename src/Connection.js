@@ -16,12 +16,10 @@ class Connection extends Component {
         display = display.join('')
         return (
             <div className="Connection">
-                ➤ {this.props.connection.destination} ↻ {this.props.connection.length} α {this.props.connection.progress}
-                [{display}]
-                &nbsp;
-                {this.props.connection.signals && 
+                [{display}] ➤ {this.props.connection.destination} ↻ {this.props.connection.length}
+                {/* {this.props.connection.signals && 
                     this.props.connection.signals.map(signal => <span key={signal.key}>{signal.progress} </span>)
-                }
+                } */}
             </div>
         )
     }

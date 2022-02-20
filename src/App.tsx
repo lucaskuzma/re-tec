@@ -46,7 +46,7 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.synth = new Tone.MembraneSynth().toDestination()
-    let value = 'a 3 - b 9, d 3\nb 3 - d 2, e 4\nc 5 - a 5\nd 8 - c 3\ne 3 - c 5'
+    let value = 'a 3 - b 9, e 11\nb 3 - e 2, f 4\nc 5 - a 5\ne 8 - c 3\nf 3 - c 5'
     this.state = {
       ...App.parseInput(value),
       status: 'ok',
@@ -86,7 +86,7 @@ class App extends Component {
           })
         })
         const note = neuron.name + '4'
-        // this.synth.triggerAttackRelease(note, '8n');
+        this.synth.triggerAttackRelease(note, '8n');
       } else {
         // otherwise stop firing
         neuron.firing = false
