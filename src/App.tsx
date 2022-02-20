@@ -9,6 +9,7 @@ type Connection = {
 
 type Neuron = {
   name: string
+  threshold: number
   connections: Array<Connection>
 }
 
@@ -34,7 +35,7 @@ class App extends Component {
 
   constructor(props) {
     super(props)
-    let value = 'a - b 51, dog 3\nb - dog 2\nc - a 5\ndog - c 3'
+    let value = 'a 4 - b 51, dog 3\nb 3 - dog 2\nc 5 - a 5\ndog 8 - c 3'
     this.state = {
       ...App.parseInput(value),
       status: 'ok',
@@ -66,16 +67,17 @@ class App extends Component {
 
   static parse(line: string) : Neuron | undefined {
     let neuron: Neuron | undefined
-    const regex = /(\w+)\s*-\s*(.*)/
+    const regex = /(\w+)\s+(\d+)\s*-\s*(.*)/
     const match = regex.exec(line);
     if (match) {
       neuron = {
         name: match[1],
+        threshold: parseInt(match[2]),
         connections: [] as Connection[],
       }
       neuron.name = match[1]
       neuron.connections = []
-      let connections = match[2]      
+      let connections = match[3]      
       for (const connectionString of connections.split(',')) {
         const trimmed = connectionString.trim()
         const regex = /(\w+)\s*(\d+)/
@@ -95,7 +97,7 @@ class App extends Component {
     for (const connection of neuron.connections) {
       connectionString += `[${connection.destination} ↻ ${connection.length}] `
     }
-    const out = `${neuron.name} ➤ ${connectionString}\n`
+    const out = `${neuron.name} ${neuron.threshold} ➤ ${connectionString}\n`
     return out
   }
 
@@ -130,7 +132,6 @@ class App extends Component {
   }
 
   render() {
-    const neurons = this.state.neurons.forEach((v, k) => <NeuronComponent key={k} neuron={v}/>)
     return (
       <div className="App">
         <div className="App-instructions">
