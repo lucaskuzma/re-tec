@@ -23,6 +23,7 @@ type Neuron = {
 }
 
 type State = {
+  stimulus: string,
   status: string,
   time: number,
   rows: number,
@@ -34,6 +35,7 @@ type State = {
 class App extends Component {
   timer: NodeJS.Timer;
   state: State = {
+    stimulus: '',
     status: '',
     time: 0,
     rows: 0,
@@ -46,14 +48,16 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.synth = new Tone.PolySynth().toDestination()
-    let value = 'a 3 - b 9, e 2\nb 3 - e 24, f 4\nc 5 - a 7, d 3, a 17\nd 2 - a 2, c 1\ne 6 - c 3, g 29\nf 3 - c 5\ng 5 - b 5 c 8'
+    let value = 'a 3 - b 9, e 2\nb 3 - e 24, f 4\nc 5 - a 7, d 3, f 17\nd 2 - a 2, c 1\ne 6 - c 3, g 29\nf 3 - c 5\ng 5 - b 5 c 8'
     this.state = {
       ...App.parseInput(value),
+      stimulus: 'a b c a b c . . a . . . a',
       status: 'ok',
       time: 0,
     }
 
     this.handleChange = this.handleChange.bind(this);
+    this.handleStimulusChange = this.handleStimulusChange.bind(this);
     this.tick = this.tick.bind(this);
   }
 
@@ -81,8 +85,11 @@ class App extends Component {
     // let sensor = this.state.neurons.get('a')
     // let sensor = this.state.neurons.get('g')
     // let sensor = this.state.neurons.get('abcdefg'.charAt(Math.random() * 7))
-    let sensor = this.state.neurons.get('abcdefg'.charAt(this.state.time % 7))
-    sensor.activation++
+    // let sensor = this.state.neurons.get('abcdefg'.charAt(this.state.time % 7))
+    const stimuli = this.state.stimulus.split(' ')
+    let sensor = this.state.neurons.get(stimuli[this.state.time % stimuli.length])
+    if (sensor)
+      sensor.activation++
 
     this.state.neurons.forEach(neuron => {
       if (neuron.activation > neuron.threshold) {
@@ -123,6 +130,13 @@ class App extends Component {
     this.setState(
       App.parseInput(event.target.value)
     )
+    Tone.start()
+  }
+
+  handleStimulusChange(event) {
+    this.setState({
+      stimulus: event.target.value,
+    })
     Tone.start()
   }
 
@@ -227,13 +241,20 @@ class App extends Component {
             />
           </form>
           <form>
-          <textarea
-              className="App-statusArea App-textArea"
-              rows={4}
-              // type="text"
-              value={this.state.status}
-              readOnly
-            />
+            <textarea
+                className="App-stimulusArea App-textArea"
+                rows={4}
+                // type="text"
+                value={this.state.stimulus}
+                onChange={this.handleStimulusChange}
+              />
+            <textarea
+                className="App-statusArea App-textArea"
+                rows={4}
+                // type="text"
+                value={this.state.status}
+                readOnly
+              />
           </form>
         </div>
 

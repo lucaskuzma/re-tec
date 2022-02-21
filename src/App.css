@@ -35,8 +35,15 @@
   width: 40%;
 }
 
+.App-stimulusArea {
+  width: 40%;
+  color: #000000;
+  background-color: #f2f2f2;
+  border-radius: 5px;
+}
+
 .App-statusArea {
-  width: 80%;
+  width: 40%;
 }
 
 .App-neuronArea {
