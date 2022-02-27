@@ -44,6 +44,12 @@
 
 .App-statusArea {
   width: 40%;
+  height: 120px;
+}
+
+.App-graph {
+  width: 40%;
+  padding: 8px;
 }
 
 .App-neuronArea {

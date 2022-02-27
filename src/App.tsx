@@ -1,7 +1,8 @@
-import './App.css';
-import { Component } from 'react';
+import './App.css'
+import { Component } from 'react'
 import NeuronComponent from './NeuronComponent'
 import * as Tone from 'tone'
+import ForceGraph3D, { GraphData } from 'react-force-graph-3d'
 
 type Signal = {
   progress: number
@@ -30,6 +31,7 @@ type State = {
   value: string,
   output: string,
   neurons: Map<string, Neuron>,
+  graph: GraphData,
 }
 
 class App extends Component {
@@ -42,6 +44,7 @@ class App extends Component {
     value: '',
     output: '',
     neurons: new Map<string, Neuron>(),
+    graph: {nodes: [], links: []},
   }
   synth: Tone.PolySynth
 
@@ -205,11 +208,36 @@ class App extends Component {
       output += this.describe(neuron)
     }
 
+    let graph = {
+      nodes: [],
+      links: [],
+    }
+
+    neurons.forEach(neuron => {
+      graph.nodes.push(
+        {
+          id: neuron.name,
+          name: neuron.name,
+          val: neuron.activation,
+        }
+      )
+
+      neuron.connections.forEach(connection => {
+        graph.links.push(
+          {
+            source: neuron.name,
+            target: connection.destination,
+          }
+        )
+      })
+    })
+
     return {
       value: text,
       output: output,
       rows: lineCount,
       neurons: neurons,
+      graph: graph,
     }
   }
 
@@ -240,6 +268,7 @@ class App extends Component {
               readOnly
             />
           </form>
+
           <form>
             <textarea
                 className="App-stimulusArea App-textArea"
@@ -256,6 +285,21 @@ class App extends Component {
                 readOnly
               />
           </form>
+
+          <div className='App-graph'>
+            <ForceGraph3D 
+              graphData={this.state.graph} 
+              nodeVal={node => this.state.neurons.get(node.id as string).activation}
+              nodeLabel={node => this.state.neurons.get(node.id as string).activation.toString()}
+              nodeColor={node => this.state.neurons.get(node.id as string).firing ? 'orange' : 'white'}
+              showNavInfo={false}
+              width={640}
+              height={240}
+              backgroundColor={'#f2f2f2'}
+              linkColor={'white'}
+              linkWidth={2}
+            />
+          </div>
         </div>
 
         <div className='App-neuronArea'>
