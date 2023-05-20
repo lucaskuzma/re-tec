@@ -51,6 +51,16 @@ class App extends Component {
   constructor(props) {
     super(props)
     this.synth = new Tone.PolySynth().toDestination()
+    this.synth.set({
+      oscillator: {
+        type: 'sine',
+      },
+      envelope: {
+        decay: 1,
+        release: 2
+      }
+    });
+
     let value = 'a 3 - b 9, e 2\nb 3 - e 24, f 4\nc 5 - a 7, d 3, f 17\nd 2 - a 2, c 1\ne 6 - c 3, g 29\nf 3 - c 5\ng 5 - b 5 c 8'
     this.state = {
       ...App.parseInput(value),
