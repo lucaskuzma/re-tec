@@ -61,10 +61,17 @@ class App extends Component {
       }
     });
 
-    let value = 'a 3 - b 9, e 2\nb 3 - e 24, f 4\nc 5 - a 7, d 3, f 17\nd 2 - a 2, c 1\ne 6 - c 3, g 29\nf 3 - c 5\ng 5 - b 5 c 8'
+    let value = [
+      'c4 5 2 > e5 12 d4 8',
+      'd4 4 2 > e5 21',
+      'a5 6 2 > d4 8',
+      'e5 8 > c4 6 g5 7',
+      'g5 9 > a5 3',
+    ].join('\n');
+    
     this.state = {
       ...App.parseInput(value),
-      stimulus: 'a b c a b c . . a . . . a',
+      stimulus: 'c4 . . a5 . .',
       status: 'ok',
       time: 0,
     }
@@ -75,7 +82,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.timer = setInterval(this.tick, 250)
+    this.timer = setInterval(this.tick, 125)
     
     // let sensor = this.state.neurons.get('a')
     // sensor.activation = sensor.threshold
@@ -116,8 +123,8 @@ class App extends Component {
             key: Math.random(),
           })
         })
-        const note = neuron.name + '3'
-        this.synth.triggerAttackRelease(note, '2n');
+        const note = neuron.name;
+        this.synth.triggerAttackRelease(note, '2');
       } else {
         // otherwise stop firing
         neuron.firing = false
@@ -154,33 +161,33 @@ class App extends Component {
   }
 
   static parse(line: string) : Neuron | undefined {
-    let neuron: Neuron | undefined
-    const regex = /(\w+)\s+(\d+)\s*-\s*(.*)/
-    const match = regex.exec(line);
-    if (match) {
+    // c4 12 2 > e4 12 c4 12
+    let [neuronString, connectionString] = line.split('>');
+    if (neuronString) {
+      let [name, threshold, stimulus] = neuronString.split(' ');      
+      let neuron:Neuron;
       neuron = {
-        name: match[1],
-        threshold: parseInt(match[2]),
+        name: name,
+        threshold: parseInt(threshold),
         activation: 0,
         firing: false,
         connections: [] as Connection[],
       }
-      neuron.name = match[1]
       neuron.connections = []
-      let connections = match[3]      
-      for (const connectionString of connections.split(',')) {
-        const trimmed = connectionString.trim()
-        const regex = /(\w+)\s*(\d+)/
-        const match = regex.exec(trimmed)
+      let connectionTokens = connectionString.trim().split(' ');
+      while( connectionTokens.length > 1 ) {
+        let destination = connectionTokens.shift();
+        let distance = connectionTokens.shift();
         const connection = {
-          destination: match[1],
-          length: parseInt(match[2]),
-          signals: [],
-        } as Connection
-        neuron.connections.push(connection) 
+            destination: destination,
+            length: distance && parseInt(distance),
+            signals: [],
+          } as Connection
+          neuron.connections.push(connection) 
       }
+      return neuron;
     }
-    return neuron
+    return undefined;
   }
 
   static describe(neuron: Neuron) {
