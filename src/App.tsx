@@ -63,9 +63,9 @@ class App extends Component {
     });
 
     let value = [
-      'c4 12 1 > e5 12 d4 8',
+      'c4 12 4 > e5 12 d4 8',
       'd4 4 > e5 21',
-      'a5 6 1 > d4 8',
+      'a5 6 2 > d4 8',
       'e5 8 > c4 6 g5 7',
       'g5 9 > a5 3',
     ].join('\n');
@@ -119,7 +119,7 @@ class App extends Component {
       }
 
       if(neuron.stimulation && neuron.stimulation > 0) {
-        neuron.activation += neuron.stimulation;
+        neuron.activation += 1 / neuron.stimulation;
       }
 
       neuron.connections.forEach(connection => {
@@ -299,20 +299,20 @@ class App extends Component {
           <div className='App-graph'>
             <ForceGraph3D 
               graphData={this.state.graph} 
-              nodeVal={node => this.state.neurons.get(node.id as string).activation * 2}
+            //   nodeVal={node => this.state.neurons.get(node.id as string).activation * 2}
               nodeLabel={node => this.state.neurons.get(node.id as string).activation.toString()}
               nodeColor={node => this.state.neurons.get(node.id as string).firing ? 'orange' : 'white'}
               showNavInfo={false}
-              width={640}
+              width={240}
               height={240}
               backgroundColor={'#f2f2f2'}
-              linkColor={'grey'}
+              linkColor={'#000000'}
               linkWidth={1}
               linkDirectionalArrowLength={3.5}
               linkDirectionalArrowRelPos={1}
               linkCurvature={0.25}
               nodeThreeObject={node => {
-                const sprite = new SpriteText((node.id as string) + " _ " + this.state.neurons.get(node.id as string).activation);
+                const sprite = new SpriteText((node.id as string) + " _ " + Math.floor(this.state.neurons.get(node.id as string).activation));
                 sprite.color = node.color;
                 sprite.textHeight = 8;
                 return sprite;
