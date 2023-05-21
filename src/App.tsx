@@ -19,7 +19,7 @@ type Neuron = {
   name: string
   threshold: number
   activation: number
-  stimulation: number
+  stimulation?: number
   firing: boolean
   connections: Array<Connection>
 }
@@ -63,16 +63,16 @@ class App extends Component {
     });
 
     let value = [
-      'c4 5 2 > e5 12 d4 8',
-      'd4 4 2 > e5 21',
-      'a5 6 2 > d4 8',
+      'c4 12 1 > e5 12 d4 8',
+      'd4 4 > e5 21',
+      'a5 6 1 > d4 8',
       'e5 8 > c4 6 g5 7',
       'g5 9 > a5 3',
     ].join('\n');
     
     this.state = {
       ...App.parseInput(value),
-      stimulus: 'c4 . . a5 . .',
+      stimulus: 'e5 . . . . .',
       status: 'ok',
       time: 0,
     }
@@ -118,6 +118,10 @@ class App extends Component {
         neuron.firing = false
       }
 
+      if(neuron.stimulation && neuron.stimulation > 0) {
+        neuron.activation += neuron.stimulation;
+      }
+
       neuron.connections.forEach(connection => {
         connection.signals.forEach(signal => {
           signal.progress++
@@ -152,12 +156,13 @@ class App extends Component {
     // c4 12 2 > e4 12 c4 12
     let [neuronString, connectionString] = line.split('>');
     if (neuronString) {
-      let [name, threshold, stimulus] = neuronString.split(' ');      
+      let [name, threshold, stimulation] = neuronString.split(' ');      
       let neuron:Neuron;
       neuron = {
         name: name,
         threshold: parseInt(threshold),
         activation: 0,
+        stimulation: stimulation ? parseInt(stimulation) : undefined,
         firing: false,
         connections: [] as Connection[],
       }
