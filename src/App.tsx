@@ -19,6 +19,7 @@ type Neuron = {
   name: string
   threshold: number
   activation: number
+  stimulation: number
   firing: boolean
   connections: Array<Connection>
 }
@@ -83,14 +84,6 @@ class App extends Component {
 
   componentDidMount() {
     this.timer = setInterval(this.tick, 125)
-    
-    // let sensor = this.state.neurons.get('a')
-    // sensor.activation = sensor.threshold
-
-    // fire each neuron once
-    // this.state.neurons.forEach(neuron => {
-    //   neuron.activation = neuron.threshold + 1
-    // })
   }
 
   componentWillUnmount() {
@@ -101,11 +94,6 @@ class App extends Component {
     this.setState({time: this.state.time + 1})
     this.setState({status: this.state.time})
 
-    // make `a` an autostimulated "sensor"
-    // let sensor = this.state.neurons.get('a')
-    // let sensor = this.state.neurons.get('g')
-    // let sensor = this.state.neurons.get('abcdefg'.charAt(Math.random() * 7))
-    // let sensor = this.state.neurons.get('abcdefg'.charAt(this.state.time % 7))
     const stimuli = this.state.stimulus.split(' ')
     let sensor = this.state.neurons.get(stimuli[this.state.time % stimuli.length])
     if (sensor)
