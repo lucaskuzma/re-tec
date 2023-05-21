@@ -63,16 +63,16 @@ class App extends Component {
     });
 
     let value = [
-      'c4 12 4 > e5 12 d4 8',
-      'd4 4 > e5 21',
-      'a5 6 2 > d4 8',
-      'e5 8 > c4 6 g5 7',
-      'g5 9 > a5 3',
+      'c4 4 4 > g4 2 c5 8',
+      'g4 3 > c4 6 g5 2',
+      'c5 2 2 > c4 1',
+      'g5 1 > c6 3',
+      'c6 2 > c4 2',
     ].join('\n');
     
     this.state = {
       ...App.parseInput(value),
-      stimulus: 'e5 . . . . .',
+      stimulus: '. . . . . .',
       status: 'ok',
       time: 0,
     }
