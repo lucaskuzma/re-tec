@@ -100,7 +100,7 @@ class App extends Component {
       sensor.activation++
 
     this.state.neurons.forEach(neuron => {
-      if (neuron.activation > neuron.threshold) {
+      if (neuron.activation >= neuron.threshold) {
         // if threshold reached, fire
         neuron.firing = true
         neuron.activation = 0
