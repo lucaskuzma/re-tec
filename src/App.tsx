@@ -303,13 +303,15 @@ class App extends Component {
               backgroundColor={'#f2f2f2'}
               linkColor={'grey'}
               linkWidth={1}
-              nodeThreeObject={(node => {
+              linkDirectionalArrowLength={3.5}
+              linkDirectionalArrowRelPos={1}
+              linkCurvature={0.25}
+              nodeThreeObject={node => {
                 const sprite = new SpriteText((node.id as string) + " _ " + this.state.neurons.get(node.id as string).activation);
-                // sprite.material.depthWrite = false; // make sprite background transparent
                 sprite.color = node.color;
                 sprite.textHeight = 8;
                 return sprite;
-              })}
+              }}
             />
           </div>
         </div>
