@@ -3,7 +3,7 @@ import { Component } from 'react'
 import NeuronComponent from './NeuronComponent'
 import * as Tone from 'tone'
 import ForceGraph3D, { GraphData } from 'react-force-graph-3d'
-
+import SpriteText from 'three-spritetext'
 type Signal = {
   progress: number
   key: number
@@ -306,15 +306,22 @@ class App extends Component {
           <div className='App-graph'>
             <ForceGraph3D 
               graphData={this.state.graph} 
-              nodeVal={node => this.state.neurons.get(node.id as string).activation}
+              nodeVal={node => this.state.neurons.get(node.id as string).activation * 2}
               nodeLabel={node => this.state.neurons.get(node.id as string).activation.toString()}
               nodeColor={node => this.state.neurons.get(node.id as string).firing ? 'orange' : 'white'}
               showNavInfo={false}
               width={640}
               height={240}
               backgroundColor={'#f2f2f2'}
-              linkColor={'white'}
-              linkWidth={2}
+              linkColor={'grey'}
+              linkWidth={1}
+              nodeThreeObject={(node => {
+                const sprite = new SpriteText((node.id as string) + " _ " + this.state.neurons.get(node.id as string).activation);
+                // sprite.material.depthWrite = false; // make sprite background transparent
+                sprite.color = node.color;
+                sprite.textHeight = 8;
+                return sprite;
+              })}
             />
           </div>
         </div>
