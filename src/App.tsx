@@ -112,7 +112,7 @@ class App extends Component {
           })
         })
         const note = neuron.name;
-        this.synth.triggerAttackRelease(note, '2');
+        this.synth.triggerAttackRelease(note, '2', undefined , .1);
       } else {
         // otherwise stop firing
         neuron.firing = false
