@@ -4,6 +4,7 @@ import NeuronComponent from './NeuronComponent';
 import * as Tone from 'tone';
 import ForceGraph3D, { GraphData } from 'react-force-graph-3d';
 import SpriteText from 'three-spritetext';
+
 type Signal = {
     progress: number;
     key: number;
@@ -32,7 +33,7 @@ type State = {
     value: string;
     output: string;
     neurons: Map<string, Neuron>;
-    graph: GraphData;
+    graph: GraphData<Neuron, Connection>;
 };
 
 class App extends Component {
@@ -131,7 +132,7 @@ class App extends Component {
                         let destination = this.state.neurons.get(
                             connection.destination
                         );
-                        destination.activation++;
+                        if (destination) destination.activation++;
                         // flag for deletion
                         signal.progress = -1;
                     }
@@ -226,7 +227,7 @@ class App extends Component {
             }
         }
 
-        let graph = {
+        let graph: GraphData = {
             nodes: [],
             links: [],
         };
