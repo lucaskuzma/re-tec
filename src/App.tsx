@@ -1,338 +1,359 @@
-import './App.css'
-import { Component } from 'react'
-import NeuronComponent from './NeuronComponent'
-import * as Tone from 'tone'
-import ForceGraph3D, { GraphData } from 'react-force-graph-3d'
-import SpriteText from 'three-spritetext'
+import './App.css';
+import { Component } from 'react';
+import NeuronComponent from './NeuronComponent';
+import * as Tone from 'tone';
+import ForceGraph3D, { GraphData } from 'react-force-graph-3d';
+import SpriteText from 'three-spritetext';
 type Signal = {
-  progress: number
-  key: number
-}
+    progress: number;
+    key: number;
+};
 
 type Connection = {
-  destination: string
-  length: number
-  signals: Array<Signal>,
-}
+    destination: string;
+    length: number;
+    signals: Array<Signal>;
+};
 
 type Neuron = {
-  name: string
-  threshold: number
-  activation: number
-  stimulation?: number
-  firing: boolean
-  connections: Array<Connection>
-}
+    name: string;
+    threshold: number;
+    activation: number;
+    stimulation?: number;
+    firing: boolean;
+    connections: Array<Connection>;
+};
 
 type State = {
-  stimulus: string,
-  status: string,
-  time: number,
-  rows: number,
-  value: string,
-  output: string,
-  neurons: Map<string, Neuron>,
-  graph: GraphData,
-}
+    stimulus: string;
+    status: string;
+    time: number;
+    rows: number;
+    value: string;
+    output: string;
+    neurons: Map<string, Neuron>;
+    graph: GraphData;
+};
 
 class App extends Component {
-  timer: NodeJS.Timer;
-  state: State = {
-    stimulus: '',
-    status: '',
-    time: 0,
-    rows: 0,
-    value: '',
-    output: '',
-    neurons: new Map<string, Neuron>(),
-    graph: {nodes: [], links: []},
-  }
-  synth: Tone.PolySynth
+    timer: NodeJS.Timer;
+    state: State = {
+        stimulus: '',
+        status: '',
+        time: 0,
+        rows: 0,
+        value: '',
+        output: '',
+        neurons: new Map<string, Neuron>(),
+        graph: { nodes: [], links: [] },
+    };
+    synth: Tone.PolySynth;
 
-  constructor(props) {
-    super(props)
-    this.synth = new Tone.PolySynth().toDestination()
-    this.synth.set({
-      oscillator: {
-        type: 'sine',
-      },
-      envelope: {
-        decay: 1,
-        release: 2
-      }
-    });
+    constructor(props) {
+        super(props);
+        this.synth = new Tone.PolySynth().toDestination();
+        this.synth.set({
+            oscillator: {
+                type: 'sine',
+            },
+            envelope: {
+                decay: 1,
+                release: 2,
+            },
+        });
 
-    let value = [
-      'c4 4 4 > g4 2 c5 8',
-      'g4 3 > c4 6 g5 2',
-      'c5 2 2 > c4 1',
-      'g5 1 > c6 3',
-      'c6 2 > c4 2',
-    ].join('\n');
-    
-    this.state = {
-      ...App.parseInput(value),
-      stimulus: '. . . . . .',
-      status: 'ok',
-      time: 0,
+        let value = [
+            'c4 4 4 > g4 2 c5 8',
+            'g4 3 > c4 6 g5 2',
+            'c5 2 2 > c4 1',
+            'g5 1 > c6 3',
+            'c6 2 > c4 2',
+        ].join('\n');
+
+        this.state = {
+            ...App.parseInput(value),
+            stimulus: '. . . . . .',
+            status: 'ok',
+            time: 0,
+        };
+
+        this.handleChange = this.handleChange.bind(this);
+        this.handleStimulusChange = this.handleStimulusChange.bind(this);
+        this.tick = this.tick.bind(this);
     }
 
-    this.handleChange = this.handleChange.bind(this);
-    this.handleStimulusChange = this.handleStimulusChange.bind(this);
-    this.tick = this.tick.bind(this);
-  }
-
-  componentDidMount() {
-    this.timer = setInterval(this.tick, 1000 / 8)
-  }
-
-  componentWillUnmount() {
-    clearInterval(this.timer)
-  }
-
-  tick() {
-    this.setState({time: this.state.time + 1})
-    this.setState({status: this.state.time})
-
-    const stimuli = this.state.stimulus.split(' ')
-    let sensor = this.state.neurons.get(stimuli[this.state.time % stimuli.length])
-    if (sensor)
-      sensor.activation++
-
-    this.state.neurons.forEach(neuron => {
-      if (neuron.activation >= neuron.threshold) {
-        // if threshold reached, fire
-        neuron.firing = true
-        neuron.activation = 0
-        neuron.connections.forEach(connection => {
-          // add signal to connection
-          connection.signals.push({
-            progress: 0,
-            key: Math.random(),
-          })
-        })
-        const note = neuron.name;
-        this.synth.triggerAttackRelease(note, '2', undefined , .1);
-      } else {
-        // otherwise stop firing
-        neuron.firing = false
-      }
-
-      if(neuron.stimulation && neuron.stimulation > 0) {
-        neuron.activation += 1 / neuron.stimulation;
-      }
-
-      neuron.connections.forEach(connection => {
-        connection.signals.forEach(signal => {
-          signal.progress++
-          if (signal.progress > connection.length) {
-            // activate destination
-            let destination = this.state.neurons.get(connection.destination)
-            destination.activation++
-            // flag for deletion
-            signal.progress = -1
-          }
-        })
-        connection.signals = connection.signals.filter(signal => signal.progress >= 0)
-      })
-    })
-  }
-
-  handleChange(event) {
-    this.setState(
-      App.parseInput(event.target.value)
-    )
-    Tone.start()
-  }
-
-  handleStimulusChange(event) {
-    this.setState({
-      stimulus: event.target.value,
-    })
-    Tone.start()
-  }
-
-  static parse(line: string) : Neuron | undefined {
-    // c4 12 2 > e4 12 c4 12
-    const regex = /\w+\s\d+(\s\d*)*\s>(\s\w+\s\d+)+/;
-    if( !regex.test(line)) return undefined;
-
-    let [neuronString, connectionString] = line.split('>');
-    if (neuronString) {
-      let [name, threshold, stimulation] = neuronString.split(' ');      
-      let neuron:Neuron;
-      neuron = {
-        name: name,
-        threshold: parseInt(threshold),
-        activation: 0,
-        stimulation: stimulation ? parseInt(stimulation) : undefined,
-        firing: false,
-        connections: [] as Connection[],
-      }
-      neuron.connections = []
-      let connectionTokens = connectionString.trim().split(' ');
-      while( connectionTokens.length > 1 ) {
-        let destination = connectionTokens.shift();
-        let distance = connectionTokens.shift();
-        const connection = {
-            destination: destination,
-            length: distance && parseInt(distance),
-            signals: [],
-          } as Connection
-          neuron.connections.push(connection) 
-      }
-      return neuron;
+    componentDidMount() {
+        this.timer = setInterval(this.tick, 1000 / 8);
     }
-    return undefined;
-  }
 
-  static describe(neuron: Neuron) {
-    let connectionString = ''
-    for (const connection of neuron.connections) {
-      connectionString += `[${connection.destination} ↻ ${connection.length}] `
+    componentWillUnmount() {
+        clearInterval(this.timer);
     }
-    const out = `${neuron.name} ${neuron.threshold} ➤ ${connectionString}\n`
-    return out
-  }
 
-  static parseInput(text: string) {
-    let lineCount = 1; // rough estimate of lines
+    tick() {
+        this.setState({ time: this.state.time + 1 });
+        this.setState({ status: this.state.time });
 
-    // split input into lines
-    let lines = text.split('\n');
+        const stimuli = this.state.stimulus.split(' ');
+        let sensor = this.state.neurons.get(
+            stimuli[this.state.time % stimuli.length]
+        );
+        if (sensor) sensor.activation++;
 
-    // init
-    let neurons = new Map<string, Neuron>()
-    let output = ''
+        this.state.neurons.forEach((neuron) => {
+            if (neuron.activation >= neuron.threshold) {
+                // if threshold reached, fire
+                neuron.firing = true;
+                neuron.activation = 0;
+                neuron.connections.forEach((connection) => {
+                    // add signal to connection
+                    connection.signals.push({
+                        progress: 0,
+                        key: Math.random(),
+                    });
+                });
+                const note = neuron.name;
+                this.synth.triggerAttackRelease(note, '2', undefined, 0.1);
+            } else {
+                // otherwise stop firing
+                neuron.firing = false;
+            }
 
-    // for each line
-    for (const line of lines) {
-      lineCount += 1 + Math.floor(line.length / 38);
+            if (neuron.stimulation && neuron.stimulation > 0) {
+                neuron.activation += 1 / neuron.stimulation;
+            }
 
-      // parse string into neuron
-      let neuron = this.parse(line)
-      if (neuron) {
-        let existing = neurons.get(neuron.name)
-        if (existing) {
-            neuron.activation = existing.activation
+            neuron.connections.forEach((connection) => {
+                connection.signals.forEach((signal) => {
+                    signal.progress++;
+                    if (signal.progress > connection.length) {
+                        // activate destination
+                        let destination = this.state.neurons.get(
+                            connection.destination
+                        );
+                        destination.activation++;
+                        // flag for deletion
+                        signal.progress = -1;
+                    }
+                });
+                connection.signals = connection.signals.filter(
+                    (signal) => signal.progress >= 0
+                );
+            });
+        });
+    }
+
+    handleChange(event) {
+        this.setState(App.parseInput(event.target.value));
+        Tone.start();
+    }
+
+    handleStimulusChange(event) {
+        this.setState({
+            stimulus: event.target.value,
+        });
+        Tone.start();
+    }
+
+    static parse(line: string): Neuron | undefined {
+        // c4 12 2 > e4 12 c4 12
+        const regex = /\w+\s\d+(\s\d*)*\s>(\s\w+\s\d+)+/;
+        if (!regex.test(line)) return undefined;
+
+        let [neuronString, connectionString] = line.split('>');
+        if (neuronString) {
+            let [name, threshold, stimulation] = neuronString.split(' ');
+            let neuron: Neuron;
+            neuron = {
+                name: name,
+                threshold: parseInt(threshold),
+                activation: 0,
+                stimulation: stimulation ? parseInt(stimulation) : undefined,
+                firing: false,
+                connections: [] as Connection[],
+            };
+            neuron.connections = [];
+            let connectionTokens = connectionString.trim().split(' ');
+            while (connectionTokens.length > 1) {
+                let destination = connectionTokens.shift();
+                let distance = connectionTokens.shift();
+                const connection = {
+                    destination: destination,
+                    length: distance && parseInt(distance),
+                    signals: [],
+                } as Connection;
+                neuron.connections.push(connection);
+            }
+            return neuron;
         }
-        neurons.set(neuron.name, neuron)
-
-        // print neuron
-        output += this.describe(neuron)
-      }
+        return undefined;
     }
 
-    let graph = {
-      nodes: [],
-      links: [],
-    }
-
-    neurons.forEach(neuron => {
-      graph.nodes.push(
-        {
-          id: neuron.name,
-          name: neuron.name,
-          val: neuron.activation,
+    static describe(neuron: Neuron) {
+        let connectionString = '';
+        for (const connection of neuron.connections) {
+            connectionString += `[${connection.destination} ↻ ${connection.length}] `;
         }
-      )
-
-      neuron.connections.forEach(connection => {
-        graph.links.push(
-          {
-            source: neuron.name,
-            target: connection.destination,
-          }
-        )
-      })
-    })
-
-    return {
-      value: text,
-      output: output,
-      rows: lineCount,
-      neurons: neurons,
-      graph: graph,
+        const out = `${neuron.name} ${neuron.threshold} ➤ ${connectionString}\n`;
+        return out;
     }
-  }
 
-  render() {
-    return (
-      <div className="App">
-        <div className="App-instructions">
-          <p>
-            {/* <strong><a class="title" href="?e=">re-TEC</a></strong> */}
-          </p>
-        </div>
-        <div className="center">
-          <form>
-            <textarea
-              className="App-entryArea App-textArea"
-              rows={this.state.rows}
-              // type="text"
-              value={this.state.value}
-              // onScroll={this.handleScroll}
-              onChange={this.handleChange}
-            />
-            <textarea
-              className="App-outputArea App-textArea"
-              rows={this.state.rows}
-              // type="text"
-              value={this.state.output}
-              // onScroll={this.handleScroll}
-              readOnly
-            />
-          </form>
+    static parseInput(text: string) {
+        let lineCount = 1; // rough estimate of lines
 
-          <form>
-            <textarea
-                className="App-stimulusArea App-textArea"
-                rows={4}
-                // type="text"
-                value={this.state.stimulus}
-                onChange={this.handleStimulusChange}
-              />
-            <textarea
-                className="App-statusArea App-textArea"
-                rows={4}
-                // type="text"
-                value={this.state.status}
-                readOnly
-              />
-          </form>
+        // split input into lines
+        let lines = text.split('\n');
 
-          <div className='App-graph'>
-            <ForceGraph3D 
-              graphData={this.state.graph} 
-            //   nodeVal={node => this.state.neurons.get(node.id as string).activation * 2}
-              nodeLabel={node => this.state.neurons.get(node.id as string).activation.toString()}
-              nodeColor={node => this.state.neurons.get(node.id as string).firing ? 'orange' : 'white'}
-              showNavInfo={false}
-              width={240}
-              height={240}
-              backgroundColor={'#f2f2f2'}
-              linkColor={'#000000'}
-              linkWidth={1}
-              linkOpacity={0.9}
-              linkDirectionalArrowLength={3.5}
-              linkDirectionalArrowRelPos={1}
-              linkCurvature={0.25}
-              nodeThreeObject={node => {
-                const sprite = new SpriteText((node.id as string) + " _ " + Math.floor(this.state.neurons.get(node.id as string).activation));
-                sprite.color = this.state.neurons.get(node.id as string).firing ? 'orange' : 'black';
-                sprite.textHeight = 12;
-                return sprite;
-              }}
-            />
-          </div>
-        </div>
+        // init
+        let neurons = new Map<string, Neuron>();
+        let output = '';
 
-        <div className='App-neuronArea'>
-          {Array.from(this.state.neurons.values()).map((v, k) => <NeuronComponent key={k} neuron={v}/>)}
-        </div>
-      </div>
-    )
-  }
+        // for each line
+        for (const line of lines) {
+            lineCount += 1 + Math.floor(line.length / 38);
+
+            // parse string into neuron
+            let neuron = this.parse(line);
+            if (neuron) {
+                let existing = neurons.get(neuron.name);
+                if (existing) {
+                    neuron.activation = existing.activation;
+                }
+                neurons.set(neuron.name, neuron);
+
+                // print neuron
+                output += this.describe(neuron);
+            }
+        }
+
+        let graph = {
+            nodes: [],
+            links: [],
+        };
+
+        neurons.forEach((neuron) => {
+            graph.nodes.push({
+                id: neuron.name,
+                name: neuron.name,
+                val: neuron.activation,
+            });
+
+            neuron.connections.forEach((connection) => {
+                graph.links.push({
+                    source: neuron.name,
+                    target: connection.destination,
+                });
+            });
+        });
+
+        return {
+            value: text,
+            output: output,
+            rows: lineCount,
+            neurons: neurons,
+            graph: graph,
+        };
+    }
+
+    render() {
+        return (
+            <div className="App">
+                <div className="App-instructions">
+                    <p>
+                        {/* <strong><a class="title" href="?e=">re-TEC</a></strong> */}
+                    </p>
+                </div>
+                <div className="center">
+                    <form>
+                        <textarea
+                            className="App-entryArea App-textArea"
+                            rows={this.state.rows}
+                            // type="text"
+                            value={this.state.value}
+                            // onScroll={this.handleScroll}
+                            onChange={this.handleChange}
+                        />
+                        <textarea
+                            className="App-outputArea App-textArea"
+                            rows={this.state.rows}
+                            // type="text"
+                            value={this.state.output}
+                            // onScroll={this.handleScroll}
+                            readOnly
+                        />
+                    </form>
+
+                    <form>
+                        <textarea
+                            className="App-stimulusArea App-textArea"
+                            rows={4}
+                            // type="text"
+                            value={this.state.stimulus}
+                            onChange={this.handleStimulusChange}
+                        />
+                        <textarea
+                            className="App-statusArea App-textArea"
+                            rows={4}
+                            // type="text"
+                            value={this.state.status}
+                            readOnly
+                        />
+                    </form>
+
+                    <div className="App-graph">
+                        <ForceGraph3D
+                            graphData={this.state.graph}
+                            //   nodeVal={node => this.state.neurons.get(node.id as string).activation * 2}
+                            nodeLabel={(node) =>
+                                this.state.neurons
+                                    .get(node.id as string)
+                                    .activation.toString()
+                            }
+                            nodeColor={(node) =>
+                                this.state.neurons.get(node.id as string).firing
+                                    ? 'orange'
+                                    : 'white'
+                            }
+                            showNavInfo={false}
+                            width={240}
+                            height={240}
+                            backgroundColor={'#f2f2f2'}
+                            linkColor={'#000000'}
+                            linkWidth={1}
+                            linkOpacity={0.9}
+                            linkDirectionalArrowLength={3.5}
+                            linkDirectionalArrowRelPos={1}
+                            linkCurvature={0.25}
+                            nodeThreeObject={(node) => {
+                                const sprite = new SpriteText(
+                                    (node.id as string) +
+                                        ' _ ' +
+                                        Math.floor(
+                                            this.state.neurons.get(
+                                                node.id as string
+                                            ).activation
+                                        )
+                                );
+                                sprite.color = this.state.neurons.get(
+                                    node.id as string
+                                ).firing
+                                    ? 'orange'
+                                    : 'black';
+                                sprite.textHeight = 12;
+                                return sprite;
+                            }}
+                        />
+                    </div>
+                </div>
+
+                <div className="App-neuronArea">
+                    {Array.from(this.state.neurons.values()).map((v, k) => (
+                        <NeuronComponent key={k} neuron={v} />
+                    ))}
+                </div>
+            </div>
+        );
+    }
 }
 
-export default App
+export default App;
