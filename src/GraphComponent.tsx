@@ -4,12 +4,17 @@ import SpriteText from 'three-spritetext';
 import React from 'react';
 import { Neuron } from './App';
 
+type GraphProps = {
+    graph: GraphData;
+    neurons: Map<string, Neuron>;
+};
+
 type GraphState = {
     graph: GraphData;
     neurons: Map<string, Neuron>;
 };
 
-class GraphComponent extends Component<GraphState> {
+class GraphComponent extends Component<GraphProps, GraphState> {
     constructor(props) {
         super(props);
         this.state = {
