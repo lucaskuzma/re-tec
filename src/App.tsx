@@ -2,8 +2,13 @@ import './App.css';
 import { Component } from 'react';
 import NeuronComponent from './NeuronComponent';
 import * as Tone from 'tone';
-import ForceGraph3D, { GraphData } from 'react-force-graph-3d';
+import ForceGraph3D, {
+    GraphData,
+    NodeObject,
+    LinkObject,
+} from 'react-force-graph-3d';
 import SpriteText from 'three-spritetext';
+import React from 'react';
 
 type Signal = {
     progress: number;
@@ -33,7 +38,7 @@ type State = {
     value: string;
     output: string;
     neurons: Map<string, Neuron>;
-    graph: GraphData<Neuron, Connection>;
+    graph: GraphData;
 };
 
 class App extends Component {
@@ -305,16 +310,20 @@ class App extends Component {
                         <ForceGraph3D
                             graphData={this.state.graph}
                             //   nodeVal={node => this.state.neurons.get(node.id as string).activation * 2}
-                            nodeLabel={(node) =>
-                                this.state.neurons
-                                    .get(node.id as string)
-                                    .activation.toString()
-                            }
-                            nodeColor={(node) =>
-                                this.state.neurons.get(node.id as string).firing
+                            nodeLabel={(node) => {
+                                const nodeId = node.id as string;
+                                const neuron = this.state.neurons.get(nodeId);
+                                return neuron
+                                    ? neuron.activation.toString()
+                                    : '';
+                            }}
+                            nodeColor={(node) => {
+                                const nodeId = node.id as string;
+                                const neuron = this.state.neurons.get(nodeId);
+                                return neuron && neuron.firing
                                     ? 'orange'
-                                    : 'white'
-                            }
+                                    : 'white';
+                            }}
                             showNavInfo={false}
                             width={240}
                             height={240}
@@ -326,20 +335,18 @@ class App extends Component {
                             linkDirectionalArrowRelPos={1}
                             linkCurvature={0.25}
                             nodeThreeObject={(node) => {
+                                const nodeId = node.id as string;
+                                const neuron = this.state.neurons.get(nodeId);
                                 const sprite = new SpriteText(
-                                    (node.id as string) +
-                                        ' _ ' +
-                                        Math.floor(
-                                            this.state.neurons.get(
-                                                node.id as string
-                                            ).activation
-                                        )
+                                    neuron &&
+                                        nodeId +
+                                            ' _ ' +
+                                            Math.floor(neuron.activation)
                                 );
-                                sprite.color = this.state.neurons.get(
-                                    node.id as string
-                                ).firing
-                                    ? 'orange'
-                                    : 'black';
+                                sprite.color =
+                                    neuron && neuron.firing
+                                        ? 'orange'
+                                        : 'black';
                                 sprite.textHeight = 12;
                                 return sprite;
                             }}
