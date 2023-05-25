@@ -83,7 +83,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    this.timer = setInterval(this.tick, 125)
+    this.timer = setInterval(this.tick, 1000 / 8)
   }
 
   componentWillUnmount() {
@@ -154,6 +154,9 @@ class App extends Component {
 
   static parse(line: string) : Neuron | undefined {
     // c4 12 2 > e4 12 c4 12
+    const regex = /\w+\s\d+(\s\d*)*\s>(\s\w+\s\d+)+/;
+    if( !regex.test(line)) return undefined;
+
     let [neuronString, connectionString] = line.split('>');
     if (neuronString) {
       let [name, threshold, stimulation] = neuronString.split(' ');      
@@ -208,14 +211,16 @@ class App extends Component {
 
       // parse string into neuron
       let neuron = this.parse(line)
-      let existing = neurons.get(neuron.name)
-      if (existing) {
-        neuron.activation = existing.activation
-      }
-      neurons.set(neuron.name, neuron)
+      if (neuron) {
+        let existing = neurons.get(neuron.name)
+        if (existing) {
+            neuron.activation = existing.activation
+        }
+        neurons.set(neuron.name, neuron)
 
-      // print neuron
-      output += this.describe(neuron)
+        // print neuron
+        output += this.describe(neuron)
+      }
     }
 
     let graph = {
@@ -308,13 +313,14 @@ class App extends Component {
               backgroundColor={'#f2f2f2'}
               linkColor={'#000000'}
               linkWidth={1}
+              linkOpacity={0.9}
               linkDirectionalArrowLength={3.5}
               linkDirectionalArrowRelPos={1}
               linkCurvature={0.25}
               nodeThreeObject={node => {
                 const sprite = new SpriteText((node.id as string) + " _ " + Math.floor(this.state.neurons.get(node.id as string).activation));
-                sprite.color = node.color;
-                sprite.textHeight = 8;
+                sprite.color = this.state.neurons.get(node.id as string).firing ? 'orange' : 'black';
+                sprite.textHeight = 12;
                 return sprite;
               }}
             />
