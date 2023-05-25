@@ -2,13 +2,9 @@ import './App.css';
 import { Component } from 'react';
 import NeuronComponent from './NeuronComponent';
 import * as Tone from 'tone';
-import ForceGraph3D, {
-    GraphData,
-    NodeObject,
-    LinkObject,
-} from 'react-force-graph-3d';
-import SpriteText from 'three-spritetext';
+import { GraphData } from 'react-force-graph-3d';
 import React from 'react';
+import GraphComponent from './GraphComponent.tsx';
 
 type Signal = {
     progress: number;
@@ -264,11 +260,26 @@ class App extends Component {
     render() {
         return (
             <div className="App">
-                <div className="App-instructions">
-                    <p>
-                        {/* <strong><a class="title" href="?e=">re-TEC</a></strong> */}
-                    </p>
+                <div className="App-neuronArea">
+                    {Array.from(this.state.neurons.values()).map((v, k) => (
+                        <NeuronComponent key={k} neuron={v} />
+                    ))}
+                    <GraphComponent
+                        graph={this.state.graph}
+                        neurons={this.state.neurons}
+                    />
                 </div>
+
+                {/* <div className="App-instructions">
+                    <p>
+                        <strong>
+                            <a class="title" href="?e=">
+                                re-TEC
+                            </a>
+                        </strong>
+                    </p>
+                </div> */}
+
                 <div className="center">
                     <form>
                         <textarea
@@ -305,63 +316,10 @@ class App extends Component {
                             readOnly
                         />
                     </form>
-
-                    <div className="App-graph">
-                        <ForceGraph3D
-                            graphData={this.state.graph}
-                            //   nodeVal={node => this.state.neurons.get(node.id as string).activation * 2}
-                            nodeLabel={(node) => {
-                                const nodeId = node.id as string;
-                                const neuron = this.state.neurons.get(nodeId);
-                                return neuron
-                                    ? neuron.activation.toString()
-                                    : '';
-                            }}
-                            nodeColor={(node) => {
-                                const nodeId = node.id as string;
-                                const neuron = this.state.neurons.get(nodeId);
-                                return neuron && neuron.firing
-                                    ? 'orange'
-                                    : 'white';
-                            }}
-                            showNavInfo={false}
-                            width={240}
-                            height={240}
-                            backgroundColor={'#f2f2f2'}
-                            linkColor={'#000000'}
-                            linkWidth={1}
-                            linkOpacity={0.9}
-                            linkDirectionalArrowLength={3.5}
-                            linkDirectionalArrowRelPos={1}
-                            linkCurvature={0.25}
-                            nodeThreeObject={(node) => {
-                                const nodeId = node.id as string;
-                                const neuron = this.state.neurons.get(nodeId);
-                                const sprite = new SpriteText(
-                                    neuron &&
-                                        nodeId +
-                                            ' _ ' +
-                                            Math.floor(neuron.activation)
-                                );
-                                sprite.color =
-                                    neuron && neuron.firing
-                                        ? 'orange'
-                                        : 'black';
-                                sprite.textHeight = 12;
-                                return sprite;
-                            }}
-                        />
-                    </div>
-                </div>
-
-                <div className="App-neuronArea">
-                    {Array.from(this.state.neurons.values()).map((v, k) => (
-                        <NeuronComponent key={k} neuron={v} />
-                    ))}
                 </div>
             </div>
         );
     }
 }
 
-export default App;
+export { Neuron, App as default };
