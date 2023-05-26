@@ -53,10 +53,7 @@ class GraphComponent extends Component<GraphProps, GraphState> {
                     nodeThreeObject={(node) => {
                         const nodeId = node.id as string;
                         const neuron = this.state.neurons.get(nodeId);
-                        const sprite = new SpriteText(
-                            neuron &&
-                                nodeId + ' _ ' + Math.floor(neuron.activation)
-                        );
+                        const sprite = new SpriteText(neuron && nodeId);
                         sprite.color =
                             neuron && neuron.firing ? 'orange' : 'black';
                         sprite.textHeight = 12;

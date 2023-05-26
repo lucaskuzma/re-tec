@@ -1,14 +1,19 @@
 /* .App {
 } */
 
-/* .App-instructions {
-} */
+.App-logo {
+  margin: 8px;
+}
+
+.App-control {
+    margin: 8px;
+  }
 
 .App-textArea {
   border: none;
   outline: none;
   padding: 8px;
-  margin: 8px;
+  font-size: inherit;
 }
 
 .App-entryArea {

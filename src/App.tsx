@@ -69,16 +69,16 @@ class App extends Component {
             'g4 3 > c4 6 g5 2',
             'x 2 > c4 2',
             'g5 1 > y 3',
-            'y 2 4 > c4 2 z 1',
+            'y 2 24 > c4 2 z 1',
             'z 2 > g3 1 c5 3',
             'g3 1 > y 2',
-            'c5 2 > y 4 f4 1',
-            'f4 2 > c4 1',
+            'c5 2 > y 8 f4 3',
+            'f4 2 > c4 18',
         ].join('\n');
 
         this.state = {
             ...App.parseInput(value),
-            stimulus: '. . . . . .',
+            stimulus: '. . . y . .',
             status: 'ok',
             time: 0,
         };
@@ -279,7 +279,7 @@ class App extends Component {
                     />
                 </div>
 
-                {/* <div className="App-instructions">
+                {/* <div className="App-logo">
                     <p>
                         <strong>
                             <a class="title" href="?e=">
@@ -304,7 +304,15 @@ class App extends Component {
                             readOnly
                         />
                     </form>
-
+                    <p>
+                        Define nodes like this: [name] [threshold]
+                        [self-stimulation-period] &gt; [destination] [distance]
+                    </p>
+                    <p>Note names will emit sounds.</p>
+                    <p>
+                        For more stimulation, use the form below to enter node
+                        names.
+                    </p>
                     <form>
                         <textarea
                             className="App-stimulusArea App-textArea"
