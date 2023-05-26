@@ -94,7 +94,7 @@ class App extends Component {
 
     tick() {
         this.setState({ time: this.state.time + 1 });
-        this.setState({ status: this.state.time });
+        this.setState({ status: this.state.time % 8 });
 
         const stimuli = this.state.stimulus.split(' ');
         let sensor = this.state.neurons.get(
@@ -261,9 +261,11 @@ class App extends Component {
         return (
             <div className="App">
                 <div className="App-neuronArea">
-                    {Array.from(this.state.neurons.values()).map((v, k) => (
-                        <NeuronComponent key={k} neuron={v} />
-                    ))}
+                    <div className="App-neuronStack">
+                        {Array.from(this.state.neurons.values()).map((v, k) => (
+                            <NeuronComponent key={k} neuron={v} />
+                        ))}
+                    </div>
                     <GraphComponent
                         graph={this.state.graph}
                         neurons={this.state.neurons}
@@ -280,7 +282,7 @@ class App extends Component {
                     </p>
                 </div> */}
 
-                <div className="center">
+                <div className="App-control">
                     <form>
                         <textarea
                             className="App-entryArea App-textArea"

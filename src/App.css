@@ -1,71 +1,52 @@
 /* .App {
 } */
 
-.App-instructions {
-  width: 80%;
-  padding-left: 10%;
-  padding-bottom: 14px;
-}
+/* .App-instructions {
+} */
 
 .App-textArea {
-  resize: none;
-
-  font-family: 'Roboto Mono', monospace;
-  font-size: inherit;
-  color: inherit;
-
   border: none;
   outline: none;
-
-  -webkit-box-shadow: none;
-  -moz-box-shadow: none;
-  box-shadow: none;
-
   padding: 8px;
+  margin: 8px;
 }
 
 .App-entryArea {
-  width: 40%;
+  width: 320px;
   color: #000000;
   background-color: #f2f2f2;
-  border-radius: 5px;
+  border-radius: 4px;
 }
 
 .App-outputArea {
-  width: 40%;
+    width: 320px;
 }
 
 .App-stimulusArea {
-  width: 40%;
+  width: 320px;
   color: #000000;
   background-color: #f2f2f2;
-  border-radius: 5px;
+  border-radius: 4px;
 }
 
 .App-statusArea {
-  width: 40%;
-  height: 120px;
+  width: 320px;
 }
 
 .App-graph {
-  width: 40%;
-  padding: 8px;
+  margin: 8px;
+}
+
+.App-neuronStack {
+  width: 320px;
 }
 
 .App-neuronArea {
-  width: 80%;
-  padding-top: 24px;
-  padding-bottom: 36px;
-  padding-left: 10%;
   white-space: pre;
+  display: flex;
 }
 
-.App-list li {
-  display: inline-flex;
-  white-space: nowrap;
-}
-
-/** Mobile **/
+/** Mobile -- does any of this work? **/
 @media only screen and (max-width: 767px), only screen and (max-device-width: 767px) {
 
   .App-entryArea {

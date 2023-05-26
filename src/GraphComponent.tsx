@@ -3,6 +3,7 @@ import ForceGraph3D, { GraphData } from 'react-force-graph-3d';
 import SpriteText from 'three-spritetext';
 import React from 'react';
 import { Neuron } from './App';
+import './GraphComponent.css';
 
 type GraphProps = {
     graph: GraphData;
@@ -42,7 +43,7 @@ class GraphComponent extends Component<GraphProps, GraphState> {
                     showNavInfo={false}
                     width={240}
                     height={240}
-                    backgroundColor={'#f2f2f2'}
+                    backgroundColor={'antiquewhite'}
                     linkColor={'#000000'}
                     linkWidth={1}
                     linkOpacity={0.9}
