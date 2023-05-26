@@ -287,17 +287,13 @@ class App extends Component {
                         <textarea
                             className="App-entryArea App-textArea"
                             rows={this.state.rows}
-                            // type="text"
                             value={this.state.value}
-                            // onScroll={this.handleScroll}
                             onChange={this.handleChange}
                         />
                         <textarea
                             className="App-outputArea App-textArea"
                             rows={this.state.rows}
-                            // type="text"
                             value={this.state.output}
-                            // onScroll={this.handleScroll}
                             readOnly
                         />
                     </form>
@@ -306,14 +302,12 @@ class App extends Component {
                         <textarea
                             className="App-stimulusArea App-textArea"
                             rows={4}
-                            // type="text"
                             value={this.state.stimulus}
                             onChange={this.handleStimulusChange}
                         />
                         <textarea
                             className="App-statusArea App-textArea"
                             rows={4}
-                            // type="text"
                             value={this.state.status}
                             readOnly
                         />
