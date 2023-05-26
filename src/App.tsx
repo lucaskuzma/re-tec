@@ -65,11 +65,15 @@ class App extends Component {
         });
 
         let value = [
-            'c4 4 4 > g4 2 c5 8',
+            'c4 4 12 > g4 2 x 8',
             'g4 3 > c4 6 g5 2',
-            'c5 2 2 > c4 1',
-            'g5 1 > c6 3',
-            'c6 2 > c4 2',
+            'x 2 > c4 2',
+            'g5 1 > y 3',
+            'y 2 4 > c4 2 z 1',
+            'z 2 > g3 1 c5 3',
+            'g3 1 > y 2',
+            'c5 2 > y 4 f4 1',
+            'f4 2 > c4 1',
         ].join('\n');
 
         this.state = {
@@ -114,8 +118,11 @@ class App extends Component {
                         key: Math.random(),
                     });
                 });
-                const note = neuron.name;
-                this.synth.triggerAttackRelease(note, '2', undefined, 0.1);
+                const regex = /\d+$/;
+                if (regex.test(neuron.name)) {
+                    const note = neuron.name;
+                    this.synth.triggerAttackRelease(note, '2', undefined, 0.1);
+                }
             } else {
                 // otherwise stop firing
                 neuron.firing = false;
@@ -194,7 +201,7 @@ class App extends Component {
     static describe(neuron: Neuron) {
         let connectionString = '';
         for (const connection of neuron.connections) {
-            connectionString += `[${connection.destination} ↻ ${connection.length}] `;
+            connectionString += `[${connection.destination} ⟿ ${connection.length}] `;
         }
         const out = `${neuron.name} ${neuron.threshold} ➤ ${connectionString}\n`;
         return out;
