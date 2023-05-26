@@ -68,7 +68,7 @@ class App extends Component {
             'c4 4 12 > g4 2 x 8',
             'g4 3 > c4 6 g5 2',
             'x 2 > c4 2',
-            'g5 1 > y 3',
+            'g5 3 > y 3',
             'y 2 24 > c4 2 z 1',
             'z 2 > g3 1 c5 3',
             'g3 1 > y 2',
