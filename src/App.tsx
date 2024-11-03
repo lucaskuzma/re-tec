@@ -23,6 +23,7 @@ type Neuron = {
     activation: number;
     stimulation?: number;
     firing: boolean;
+    lastFired?: number;
     connections: Array<Connection>;
 };
 
@@ -111,6 +112,7 @@ class App extends Component {
                 // if threshold reached, fire
                 neuron.firing = true;
                 neuron.activation = 0;
+                neuron.lastFired = Date.now();
                 neuron.connections.forEach((connection) => {
                     // add signal to connection
                     connection.signals.push({

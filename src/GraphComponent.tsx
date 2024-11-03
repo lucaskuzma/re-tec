@@ -48,6 +48,15 @@ class GraphComponent extends Component<GraphProps, GraphState> {
         }
     }
 
+    private recentlyFired(nodeId: string): boolean {
+        const FIRING_DISPLAY_MS = 400; // How long to show the firing state
+        const neuron = this.state.neurons.get(nodeId);
+        const timeSinceLastFired = neuron?.lastFired
+            ? Date.now() - neuron.lastFired
+            : Infinity;
+        return timeSinceLastFired < FIRING_DISPLAY_MS;
+    }
+
     render() {
         return (
             <div className='App-graph'>
@@ -63,8 +72,7 @@ class GraphComponent extends Component<GraphProps, GraphState> {
                     }}
                     nodeColor={(node) => {
                         const nodeId = node.id as string;
-                        const neuron = this.state.neurons.get(nodeId);
-                        return neuron && neuron.firing
+                        return this.recentlyFired(nodeId)
                             ? COLORS.TOY_ORANGE
                             : COLORS.TOY_WHITE;
                     }}
@@ -83,10 +91,9 @@ class GraphComponent extends Component<GraphProps, GraphState> {
                         const nodeId = node.id as string;
                         const neuron = this.state.neurons.get(nodeId);
                         const sprite = new SpriteText(neuron && nodeId);
-                        sprite.color =
-                            neuron && neuron.firing
-                                ? COLORS.TOY_ORANGE
-                                : COLORS.TOY_BLACK;
+                        sprite.color = this.recentlyFired(nodeId)
+                            ? COLORS.TOY_ORANGE
+                            : COLORS.TOY_BLACK;
                         sprite.textHeight = 12;
                         return sprite;
                     }}
