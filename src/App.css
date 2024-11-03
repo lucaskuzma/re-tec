@@ -1,3 +1,12 @@
+:root {
+  --toy-orange: #FF661F;
+  --toy-yellow: #FFE81F;
+  --toy-blue: #0066FF;
+  --toy-white: #FFFFFF;
+  --toy-black: #1A1A1A;
+  --toy-gray: #E5E5E5;
+}
+
 /* .App {
 } */
 
@@ -18,24 +27,30 @@
 
 .App-entryArea {
   width: 320px;
-  color: #000000;
-  background-color: #f2f2f2;
+  color: var(--toy-black);
+  background-color: var(--toy-white);
   border-radius: 4px;
+  border: 2px solid var(--toy-orange);
+  box-shadow: 4px 4px 0 var(--toy-black);
 }
 
 .App-outputArea {
     width: 320px;
+    color: var(--toy-blue);
 }
 
 .App-stimulusArea {
   width: 320px;
-  color: #000000;
-  background-color: #f2f2f2;
+  color: var(--toy-black);
+  background-color: var(--toy-white);
   border-radius: 4px;
+  border: 2px solid var(--toy-blue);
+  box-shadow: 4px 4px 0 var(--toy-black);
 }
 
 .App-statusArea {
   width: 320px;
+  color: var(--toy-orange);
 }
 
 .App-graph {

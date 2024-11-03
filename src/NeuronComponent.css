@@ -1,5 +1,15 @@
 .Neuron {
-    background-color: antiquewhite;
-    padding: 8px;
-    margin: 8px;
+    background-color: var(--toy-white);
+    border: 2px solid var(--toy-black);
+    border-radius: 4px;
+    padding: 12px;
+    margin: 12px;
+    color: var(--toy-black);
+    box-shadow: 4px 4px 0 var(--toy-yellow);
+    transition: all 0.2s ease;
+}
+
+.Neuron:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 var(--toy-yellow);
 }
