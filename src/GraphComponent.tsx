@@ -4,7 +4,7 @@ import SpriteText from 'three-spritetext';
 import React from 'react';
 import { Neuron } from './App';
 import './GraphComponent.css';
-import { COLORS } from './constants';
+import { SEMANTIC_COLORS } from './constants';
 
 type GraphProps = {
     graph: GraphData;
@@ -73,14 +73,14 @@ class GraphComponent extends Component<GraphProps, GraphState> {
                     nodeColor={(node) => {
                         const nodeId = node.id as string;
                         return this.recentlyFired(nodeId)
-                            ? COLORS.TOY_ORANGE
-                            : COLORS.TOY_WHITE;
+                            ? SEMANTIC_COLORS.MODULE_FIRED
+                            : SEMANTIC_COLORS.MODULE_TEXT;
                     }}
                     showNavInfo={false}
                     width={240}
                     height={240}
-                    backgroundColor={COLORS.APP_BG}
-                    linkColor={COLORS.MODULE_TEXT}
+                    backgroundColor={SEMANTIC_COLORS.APP_BG}
+                    linkColor={SEMANTIC_COLORS.MODULE_TEXT}
                     linkWidth={1}
                     linkOpacity={0.9}
                     linkDirectionalArrowLength={3.5}
@@ -92,8 +92,8 @@ class GraphComponent extends Component<GraphProps, GraphState> {
                         const neuron = this.state.neurons.get(nodeId);
                         const sprite = new SpriteText(neuron && nodeId);
                         sprite.color = this.recentlyFired(nodeId)
-                            ? COLORS.TOY_ORANGE
-                            : COLORS.TOY_BLACK;
+                            ? SEMANTIC_COLORS.MODULE_FIRED
+                            : SEMANTIC_COLORS.MODULE_TEXT;
                         sprite.textHeight = 12;
                         return sprite;
                     }}
