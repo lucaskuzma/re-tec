@@ -22,8 +22,8 @@
 }
 
 .App {
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: 1fr minmax(auto, 25%) 1fr;
     height: 100vh;
     font-family: 'Roboto', sans-serif;
     font-size: 14px;
@@ -37,8 +37,9 @@ form {
 
 .App-controlColumn {
     padding: 20px;
-    flex: 1;
     overflow-y: auto;
+    align-self: flex-start;
+    justify-self: start;
 }
 
 .App-textArea {
@@ -77,13 +78,14 @@ form {
   
 .App-neuronColumn {
     padding: 20px;
-    flex: 1;
     width: var(--module-width);
     white-space: pre;
     display: flex;
     font-family: inherit;
     font-size: inherit;
     overflow-y: auto;
+    align-self: flex-start;
+    justify-self: center;
 }
 
 .App-neuronStack {
@@ -98,9 +100,10 @@ form {
 
 .App-graphColumn {
     padding: 20px;
-    flex: 1;
     overflow: hidden;
     display: flex;
+    align-self: flex-start;
+    justify-self: end;
 }
 
 .App-graph {
