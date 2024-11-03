@@ -16,20 +16,45 @@ type GraphState = {
 };
 
 class GraphComponent extends Component<GraphProps, GraphState> {
+    private fgRef: any;
+
     constructor(props) {
         super(props);
         this.state = {
             graph: props.graph,
             neurons: props.neurons,
         };
+        this.fgRef = React.createRef();
+    }
+
+    componentDidMount() {
+        if (this.fgRef.current) {
+            const camera = this.fgRef.current.camera();
+            const radius = 300; // Todo: make this dynamic
+            let angle = 0;
+
+            const animate = () => {
+                // Rotate camera in a circle around the center
+                // control.autoRotate does not work, so we need to manually rotate the camera
+                angle += 0.005;
+                camera.position.x = radius * Math.cos(angle);
+                camera.position.z = radius * Math.sin(angle);
+                camera.lookAt(0, 0, 0);
+
+                requestAnimationFrame(animate);
+            };
+            animate();
+        }
     }
 
     render() {
         return (
-            <div className="App-graph">
+            <div className='App-graph'>
                 <ForceGraph3D
+                    ref={this.fgRef}
                     graphData={this.state.graph}
-                    //   nodeVal={node => this.state.neurons.get(node.id as string).activation * 2}
+                    autoRotate={true}
+                    autoRotateSpeed={1.0}
                     nodeLabel={(node) => {
                         const nodeId = node.id as string;
                         const neuron = this.state.neurons.get(nodeId);
@@ -49,6 +74,7 @@ class GraphComponent extends Component<GraphProps, GraphState> {
                     linkOpacity={0.9}
                     linkDirectionalArrowLength={3.5}
                     linkDirectionalArrowRelPos={1}
+                    enableNavigationControls={true}
                     linkCurvature={0.25}
                     nodeThreeObject={(node) => {
                         const nodeId = node.id as string;
