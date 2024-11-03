@@ -268,10 +268,6 @@ class App extends Component {
         return (
             <div className='App'>
                 <div className='App-control'>
-                    <GraphComponent
-                        graph={this.state.graph}
-                        neurons={this.state.neurons}
-                    />
                     <form>
                         <textarea
                             className='App-entryArea App-textArea'
@@ -317,6 +313,13 @@ class App extends Component {
                             <NeuronComponent key={k} neuron={v} />
                         ))}
                     </div>
+                </div>
+
+                <div className='App-graphArea'>
+                    <GraphComponent
+                        graph={this.state.graph}
+                        neurons={this.state.neurons}
+                    />
                 </div>
             </div>
         );
