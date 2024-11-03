@@ -275,12 +275,6 @@ class App extends Component {
                             value={this.state.value}
                             onChange={this.handleChange}
                         />
-                        <textarea
-                            className='App-outputArea App-textArea'
-                            rows={this.state.rows}
-                            value={this.state.output}
-                            readOnly
-                        />
                     </form>
                     <p>
                         Define nodes like this: [name] [threshold]
@@ -319,6 +313,12 @@ class App extends Component {
                     <GraphComponent
                         graph={this.state.graph}
                         neurons={this.state.neurons}
+                    />
+                    <textarea
+                        className='App-outputArea App-textArea'
+                        rows={this.state.rows}
+                        value={this.state.output}
+                        readOnly
                     />
                 </div>
             </div>
