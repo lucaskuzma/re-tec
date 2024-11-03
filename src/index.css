@@ -4,7 +4,6 @@ body {
   margin: 0;
   padding: 0;
   font-family: 'Roboto Mono', monospace;
-  color: #555555;
   font-size: 12px;
 }
 
@@ -19,20 +18,10 @@ code {
 
 a {
   text-decoration: none;
-  color: #009dff;
-
-  font-family: 'Roboto', sans-serif;
-
   padding: 4px 12px;
   margin: 4px;
   border-radius: 5px;
   font-size: inherit;
   border: none;
-  background-color: #fffeda;
-  box-shadow: 2px 2px #aaaaaa;
   outline: none;
-}
-
-a:active{
-  box-shadow: 0px 0px #eeeeee;
 }
