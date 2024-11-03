@@ -17,6 +17,7 @@
   --module-shadow-tertiary: var(--toy-yellow);
   --status-text: var(--toy-orange);
   --output-text: var(--toy-dark-gray);
+  --firing-bg: var(--toy-orange);
 
   --module-width: 240px;
 }

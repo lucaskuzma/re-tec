@@ -12,7 +12,11 @@ class NeuronComponent extends Component {
 
     render() {
         return (
-            <div className="Neuron">
+            <div
+                className={`Neuron ${
+                    this.props.neuron.firing ? 'firing-bg' : ''
+                }`}
+            >
                 {this.props.neuron.firing ? <span>🔥</span> : <span>🧠</span>}{' '}
                 {this.props.neuron.name}
                 &nbsp;[{'.'.repeat(Math.floor(this.props.neuron.activation))}

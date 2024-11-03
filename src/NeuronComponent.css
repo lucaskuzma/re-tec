@@ -10,3 +10,7 @@
     font-family: inherit;
     font-size: inherit;
 }
+
+.Neuron.firing-bg {
+    background-color: var(--firing-bg);
+}
