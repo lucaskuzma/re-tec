@@ -31,7 +31,7 @@ class GraphComponent extends Component<GraphProps, GraphState> {
     componentDidMount() {
         if (this.fgRef.current) {
             const camera = this.fgRef.current.camera();
-            const radius = 300; // Todo: make this dynamic
+            const radius = 200; // Todo: make this dynamic
             let angle = 0;
 
             const animate = () => {
@@ -77,9 +77,9 @@ class GraphComponent extends Component<GraphProps, GraphState> {
                             : SEMANTIC_COLORS.MODULE_TEXT;
                     }}
                     showNavInfo={false}
-                    width={240}
-                    height={240}
-                    backgroundColor={SEMANTIC_COLORS.APP_BG}
+                    width={320}
+                    height={320}
+                    backgroundColor={SEMANTIC_COLORS.MODULE_BG}
                     linkColor={SEMANTIC_COLORS.MODULE_TEXT}
                     linkWidth={1}
                     linkOpacity={0.9}

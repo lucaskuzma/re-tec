@@ -17,6 +17,8 @@
   --module-shadow-tertiary: var(--toy-yellow);
   --status-text: var(--toy-orange);
   --output-text: var(--toy-dark-gray);
+
+  --module-width: 240px;
 }
 
 .App {
@@ -29,14 +31,13 @@
     background-color: var(--app-bg);
 }
 
-.App-logo {
-  margin: 8px;
+form {
+    margin: 0;
 }
 
-.App-control {
-    flex: 1;
-    margin: 8px;
+.App-controlColumn {
     padding: 20px;
+    flex: 1;
     overflow-y: auto;
 }
 
@@ -50,55 +51,62 @@
 }
 
 .App-entryArea {
-  width: 320px;
+  width: var(--module-width);
   color: var(--module-text);
   background-color: var(--module-bg);
   border-radius: 4px;
   border: 2px solid var(--module-text);
   box-shadow: 4px 4px 0 var(--module-shadow-primary);
   font-family: inherit;
+  margin-bottom: 6px;
 }
 
 .App-outputArea {
-    width: 320px;
+    width: var(--module-width);
     color: var(--output-text);
 }
 
 .App-stimulusArea {
-  width: 320px;
+  width: var(--module-width);
   color: var(--module-text);
   background-color: var(--module-bg);
   border-radius: 4px;
   border: 2px solid var(--module-text);
   box-shadow: 4px 4px 0 var(--module-shadow-secondary);
 }
+  
+.App-neuronColumn {
+    padding: 20px;
+    flex: 1;
+    width: var(--module-width);
+    white-space: pre;
+    display: flex;
+    font-family: inherit;
+    font-size: inherit;
+    overflow-y: auto;
+}
+
+.App-neuronStack {
+    width: var(--module-width);
+}
 
 .App-statusArea {
-  width: 320px;
+  width: var(--module-width);
   color: var(--status-text);
   background-color: var(--app-bg);
 }
 
-.App-graph {
-  margin: 8px;
-}
-
-.App-neuronStack {
-  width: 320px;
-}
-
-.App-neuronArea {
-  flex: 1;
-  white-space: pre;
-  display: flex;
-  font-family: inherit;
-  font-size: inherit;
-  padding: 20px;
-  overflow-y: auto;
-}
-
-.App-graphArea {
-    flex: 1;
+.App-graphColumn {
     padding: 20px;
+    flex: 1;
     overflow: hidden;
+    display: flex;
+}
+
+.App-graph {
+  background-color: var(--module-bg);
+  border-radius: 4px;
+  border: 2px solid var(--module-text);
+  box-shadow: 4px 4px 0 var(--module-shadow-primary);
+  max-height: 320px;
 }

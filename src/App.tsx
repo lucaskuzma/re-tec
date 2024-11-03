@@ -269,7 +269,7 @@ class App extends Component {
     render() {
         return (
             <div className='App'>
-                <div className='App-control'>
+                <div className='App-controlColumn'>
                     <form>
                         <textarea
                             className='App-entryArea App-textArea'
@@ -278,15 +278,18 @@ class App extends Component {
                             onChange={this.handleChange}
                         />
                     </form>
-                    <p>
-                        Define nodes like this: [name] [threshold]
-                        [self-stimulation-period] &gt; [destination] [distance]
-                    </p>
-                    <p>Note names will emit sounds.</p>
-                    <p>
-                        For more stimulation, use the form below to enter node
-                        names.
-                    </p>
+                    {/* <div className='App-control-description'>
+                        <p>
+                            Define nodes like this: [name] [threshold]
+                            [self-stimulation-period] &gt; [destination]
+                            [distance]
+                        </p>
+                        <p>Note names will emit sounds.</p>
+                        <p>
+                            For more stimulation, use the form below to enter
+                            node names.
+                        </p>
+                    </div> */}
                     <form>
                         <textarea
                             className='App-stimulusArea App-textArea'
@@ -303,7 +306,7 @@ class App extends Component {
                     </form>
                 </div>
 
-                <div className='App-neuronArea'>
+                <div className='App-neuronColumn'>
                     <div className='App-neuronStack'>
                         {Array.from(this.state.neurons.values()).map((v, k) => (
                             <NeuronComponent key={k} neuron={v} />
@@ -311,17 +314,17 @@ class App extends Component {
                     </div>
                 </div>
 
-                <div className='App-graphArea'>
+                <div className='App-graphColumn'>
                     <GraphComponent
                         graph={this.state.graph}
                         neurons={this.state.neurons}
                     />
-                    <textarea
+                    {/* <textarea
                         className='App-outputArea App-textArea'
                         rows={this.state.rows}
                         value={this.state.output}
                         readOnly
-                    />
+                    /> */}
                 </div>
             </div>
         );

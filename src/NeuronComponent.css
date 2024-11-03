@@ -2,16 +2,11 @@
     background-color: var(--module-bg);
     border: 2px solid var(--module-text);
     border-radius: 4px;
-    padding: 12px;
-    margin: 12px;
+    padding: 8px;
+    margin-bottom: 12px;
     color: var(--module-text);
     box-shadow: 4px 4px 0 var(--module-shadow-tertiary);
     transition: all 0.2s ease;
     font-family: inherit;
     font-size: inherit;
-}
-
-.Neuron:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 var(--module-shadow-tertiary);
 }
