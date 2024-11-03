@@ -43,6 +43,7 @@ form {
 }
 
 .App-textArea {
+  box-sizing: border-box;
   border: none;
   outline: none;
   padding: 8px;
@@ -53,6 +54,7 @@ form {
 
 .App-entryArea {
   width: var(--module-width);
+  box-sizing: border-box;
   color: var(--module-text);
   background-color: var(--module-bg);
   border-radius: 4px;
@@ -69,6 +71,7 @@ form {
 
 .App-stimulusArea {
   width: var(--module-width);
+  box-sizing: border-box;
   color: var(--module-text);
   background-color: var(--module-bg);
   border-radius: 4px;
