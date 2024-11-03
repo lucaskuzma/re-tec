@@ -250,10 +250,12 @@ class App extends Component {
             });
 
             neuron.connections.forEach((connection) => {
-                graph.links.push({
-                    source: neuron.name,
-                    target: connection.destination,
-                });
+                if (neurons.has(connection.destination)) {
+                    graph.links.push({
+                        source: neuron.name,
+                        target: connection.destination,
+                    });
+                }
             });
         });
 
