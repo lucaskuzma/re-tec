@@ -17,10 +17,10 @@ class NeuronComponent extends Component {
                     this.props.neuron.firing ? 'firing-bg' : ''
                 }`}
             >
-                {this.props.neuron.firing ? <span>🔥</span> : <span>🧠</span>}{' '}
+                {/* {this.props.neuron.firing ? <span>🔥</span> : <span>🧠</span>}{' '} */}
                 {this.props.neuron.name}
-                &nbsp;[{'.'.repeat(Math.floor(this.props.neuron.activation))}
-                {' '.repeat(
+                &nbsp;[{'▪'.repeat(Math.floor(this.props.neuron.activation))}
+                {'▫'.repeat(
                     Math.max(
                         this.props.neuron.threshold -
                             Math.floor(this.props.neuron.activation),
