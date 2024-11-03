@@ -11,20 +11,11 @@ type GraphProps = {
     neurons: Map<string, Neuron>;
 };
 
-type GraphState = {
-    graph: GraphData;
-    neurons: Map<string, Neuron>;
-};
-
-class GraphComponent extends Component<GraphProps, GraphState> {
+class GraphComponent extends Component<GraphProps> {
     private fgRef: any;
 
     constructor(props) {
         super(props);
-        this.state = {
-            graph: props.graph,
-            neurons: props.neurons,
-        };
         this.fgRef = React.createRef();
     }
 
@@ -50,7 +41,7 @@ class GraphComponent extends Component<GraphProps, GraphState> {
 
     private recentlyFired(nodeId: string): boolean {
         const FIRING_DISPLAY_MS = 400; // How long to show the firing state
-        const neuron = this.state.neurons.get(nodeId);
+        const neuron = this.props.neurons.get(nodeId);
         const timeSinceLastFired = neuron?.lastFired
             ? Date.now() - neuron.lastFired
             : Infinity;
@@ -62,12 +53,12 @@ class GraphComponent extends Component<GraphProps, GraphState> {
             <div className='App-graph'>
                 <ForceGraph3D
                     ref={this.fgRef}
-                    graphData={this.state.graph}
+                    graphData={this.props.graph}
                     autoRotate={true}
                     autoRotateSpeed={1.0}
                     nodeLabel={(node) => {
                         const nodeId = node.id as string;
-                        const neuron = this.state.neurons.get(nodeId);
+                        const neuron = this.props.neurons.get(nodeId);
                         return neuron ? neuron.activation.toString() : '';
                     }}
                     nodeColor={(node) => {
@@ -89,7 +80,7 @@ class GraphComponent extends Component<GraphProps, GraphState> {
                     linkCurvature={0.25}
                     nodeThreeObject={(node) => {
                         const nodeId = node.id as string;
-                        const neuron = this.state.neurons.get(nodeId);
+                        const neuron = this.props.neurons.get(nodeId);
                         const sprite = new SpriteText(neuron && nodeId);
                         sprite.color = this.recentlyFired(nodeId)
                             ? SEMANTIC_COLORS.MODULE_FIRED
