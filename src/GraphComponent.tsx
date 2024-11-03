@@ -77,7 +77,7 @@ class GraphComponent extends Component<GraphProps, GraphState> {
                             : SEMANTIC_COLORS.MODULE_TEXT;
                     }}
                     showNavInfo={false}
-                    width={320}
+                    width={240}
                     height={320}
                     backgroundColor={SEMANTIC_COLORS.MODULE_BG}
                     linkColor={SEMANTIC_COLORS.MODULE_TEXT}

@@ -270,14 +270,14 @@ class App extends Component {
         return (
             <div className='App'>
                 <div className='App-controlColumn'>
-                    <form>
+                    <div>
                         <textarea
                             className='App-entryArea App-textArea'
                             rows={this.state.rows}
                             value={this.state.value}
                             onChange={this.handleChange}
                         />
-                    </form>
+                    </div>
                     {/* <div className='App-control-description'>
                         <p>
                             Define nodes like this: [name] [threshold]
@@ -290,7 +290,7 @@ class App extends Component {
                             node names.
                         </p>
                     </div> */}
-                    <form>
+                    <div>
                         <textarea
                             className='App-stimulusArea App-textArea'
                             rows={4}
@@ -303,7 +303,7 @@ class App extends Component {
                             value={this.state.status}
                             readOnly
                         />
-                    </form>
+                    </div>
                 </div>
 
                 <div className='App-neuronColumn'>
