@@ -78,3 +78,21 @@
   }
 
 }
+
+.App {
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+}
+
+.App-control {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.App-neuronArea {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}

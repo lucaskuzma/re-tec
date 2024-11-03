@@ -266,39 +266,21 @@ class App extends Component {
 
     render() {
         return (
-            <div className="App">
-                <div className="App-neuronArea">
-                    <div className="App-neuronStack">
-                        {Array.from(this.state.neurons.values()).map((v, k) => (
-                            <NeuronComponent key={k} neuron={v} />
-                        ))}
-                    </div>
+            <div className='App'>
+                <div className='App-control'>
                     <GraphComponent
                         graph={this.state.graph}
                         neurons={this.state.neurons}
                     />
-                </div>
-
-                {/* <div className="App-logo">
-                    <p>
-                        <strong>
-                            <a class="title" href="?e=">
-                                re-TEC
-                            </a>
-                        </strong>
-                    </p>
-                </div> */}
-
-                <div className="App-control">
                     <form>
                         <textarea
-                            className="App-entryArea App-textArea"
+                            className='App-entryArea App-textArea'
                             rows={this.state.rows}
                             value={this.state.value}
                             onChange={this.handleChange}
                         />
                         <textarea
-                            className="App-outputArea App-textArea"
+                            className='App-outputArea App-textArea'
                             rows={this.state.rows}
                             value={this.state.output}
                             readOnly
@@ -315,18 +297,26 @@ class App extends Component {
                     </p>
                     <form>
                         <textarea
-                            className="App-stimulusArea App-textArea"
+                            className='App-stimulusArea App-textArea'
                             rows={4}
                             value={this.state.stimulus}
                             onChange={this.handleStimulusChange}
                         />
                         <textarea
-                            className="App-statusArea App-textArea"
+                            className='App-statusArea App-textArea'
                             rows={4}
                             value={this.state.status}
                             readOnly
                         />
                     </form>
+                </div>
+
+                <div className='App-neuronArea'>
+                    <div className='App-neuronStack'>
+                        {Array.from(this.state.neurons.values()).map((v, k) => (
+                            <NeuronComponent key={k} neuron={v} />
+                        ))}
+                    </div>
                 </div>
             </div>
         );
