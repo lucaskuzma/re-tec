@@ -4,8 +4,19 @@
   --toy-blue: #0066FF;
   --toy-white: #FFFFFF;
   --toy-black: #1A1A1A;
-  --toy-gray: #E5E5E5;
+  --toy-light-gray: #ececec;
+  --toy-gray: #e0e0e0;
   --toy-dark-gray: #808080;
+
+  /* Semantic variables */
+  --app-bg: var(--toy-light-gray);
+  --module-bg: var(--toy-gray);
+  --module-text: var(--toy-black);
+  --module-shadow-primary: var(--toy-orange);
+  --module-shadow-secondary: var(--toy-blue);
+  --module-shadow-tertiary: var(--toy-yellow);
+  --status-text: var(--toy-orange);
+  --output-text: var(--toy-dark-gray);
 }
 
 .App {
@@ -15,6 +26,7 @@
     font-family: 'Roboto', sans-serif;
     font-size: 14px;
     line-height: 1.5;
+    background-color: var(--app-bg);
 }
 
 .App-logo {
@@ -39,31 +51,32 @@
 
 .App-entryArea {
   width: 320px;
-  color: var(--toy-black);
-  background-color: var(--toy-white);
+  color: var(--module-text);
+  background-color: var(--module-bg);
   border-radius: 4px;
-  border: 2px solid var(--toy-black);
-  box-shadow: 4px 4px 0 var(--toy-orange);
+  border: 2px solid var(--module-text);
+  box-shadow: 4px 4px 0 var(--module-shadow-primary);
   font-family: inherit;
 }
 
 .App-outputArea {
     width: 320px;
-    color: var(--toy-dark-gray);
+    color: var(--output-text);
 }
 
 .App-stimulusArea {
   width: 320px;
-  color: var(--toy-black);
-  background-color: var(--toy-white);
+  color: var(--module-text);
+  background-color: var(--module-bg);
   border-radius: 4px;
-  border: 2px solid var(--toy-black);
-  box-shadow: 4px 4px 0 var(--toy-blue);
+  border: 2px solid var(--module-text);
+  box-shadow: 4px 4px 0 var(--module-shadow-secondary);
 }
 
 .App-statusArea {
   width: 320px;
-  color: var(--toy-orange);
+  color: var(--status-text);
+  background-color: var(--app-bg);
 }
 
 .App-graph {

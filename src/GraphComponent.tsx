@@ -79,8 +79,8 @@ class GraphComponent extends Component<GraphProps, GraphState> {
                     showNavInfo={false}
                     width={240}
                     height={240}
-                    backgroundColor={COLORS.TOY_WHITE}
-                    linkColor={COLORS.TOY_BLACK}
+                    backgroundColor={COLORS.APP_BG}
+                    linkColor={COLORS.MODULE_TEXT}
                     linkWidth={1}
                     linkOpacity={0.9}
                     linkDirectionalArrowLength={3.5}
