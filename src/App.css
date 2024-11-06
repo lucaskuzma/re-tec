@@ -1,65 +1,119 @@
-/* .App {
-} */
+:root {
+  --toy-orange: #FF661F;
+  --toy-yellow: #FFE81F;
+  --toy-blue: #0066FF;
+  --toy-white: #FFFFFF;
+  --toy-black: #1A1A1A;
+  --toy-light-gray: #ececec;
+  --toy-gray: #e0e0e0;
+  --toy-dark-gray: #808080;
 
-.App-logo {
-  margin: 8px;
+  /* Semantic variables */
+  --app-bg: var(--toy-light-gray);
+  --module-bg: var(--toy-gray);
+  --module-text: var(--toy-black);
+  --module-shadow-primary: var(--toy-orange);
+  --module-shadow-secondary: var(--toy-blue);
+  --module-shadow-tertiary: var(--toy-yellow);
+  --status-text: var(--toy-orange);
+  --output-text: var(--toy-dark-gray);
+  --firing-bg: var(--toy-orange);
+
+  --module-width: 240px;
 }
 
-.App-control {
-    margin: 8px;
-  }
+.App {
+    display: grid;
+    grid-template-columns: 1fr minmax(auto, 25%) 1fr;
+    height: 100vh;
+    font-family: 'Roboto', sans-serif;
+    font-size: 14px;
+    line-height: 1.5;
+    background-color: var(--app-bg);
+}
+
+form {
+    margin: 0;
+}
+
+.App-controlColumn {
+    padding: 20px;
+    overflow-y: auto;
+    align-self: flex-start;
+    justify-self: start;
+}
 
 .App-textArea {
+  box-sizing: border-box;
   border: none;
   outline: none;
   padding: 8px;
+  font-family: inherit;
   font-size: inherit;
+  line-height: inherit;
 }
 
 .App-entryArea {
-  width: 320px;
-  color: #000000;
-  background-color: #f2f2f2;
+  width: var(--module-width);
+  box-sizing: border-box;
+  color: var(--module-text);
+  background-color: var(--module-bg);
   border-radius: 4px;
+  border: 2px solid var(--module-text);
+  box-shadow: 4px 4px 0 var(--module-shadow-primary);
+  font-family: inherit;
+  margin-bottom: 6px;
 }
 
 .App-outputArea {
-    width: 320px;
+    width: var(--module-width);
+    color: var(--output-text);
 }
 
 .App-stimulusArea {
-  width: 320px;
-  color: #000000;
-  background-color: #f2f2f2;
+  width: var(--module-width);
+  box-sizing: border-box;
+  color: var(--module-text);
+  background-color: var(--module-bg);
   border-radius: 4px;
+  border: 2px solid var(--module-text);
+  box-shadow: 4px 4px 0 var(--module-shadow-secondary);
 }
-
-.App-statusArea {
-  width: 320px;
-}
-
-.App-graph {
-  margin: 8px;
+  
+.App-neuronColumn {
+    padding: 20px;
+    width: var(--module-width);
+    white-space: pre;
+    display: flex;
+    font-family: inherit;
+    font-size: inherit;
+    overflow-y: auto;
+    align-self: flex-start;
+    justify-self: center;
 }
 
 .App-neuronStack {
-  width: 320px;
+    width: var(--module-width);
 }
 
-.App-neuronArea {
-  white-space: pre;
-  display: flex;
+.App-statusArea {
+  width: var(--module-width);
+  color: var(--status-text);
+  background-color: var(--app-bg);
 }
 
-/** Mobile -- does any of this work? **/
-@media only screen and (max-width: 767px), only screen and (max-device-width: 767px) {
+.App-graphColumn {
+    padding: 20px;
+    overflow: hidden;
+    display: flex;
+    align-self: flex-start;
+    justify-self: end;
+}
 
-  .App-entryArea {
-    width: 80%;
-  }
-
-  .App-outputArea {
-    display: none;
-  }
-
+.App-graph {
+  background-color: var(--module-bg);
+  border-radius: 4px;
+  border: 2px solid var(--module-text);
+  box-shadow: 4px 4px 0 var(--module-shadow-primary);
+  max-height: 320px;
 }

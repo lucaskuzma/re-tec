@@ -23,6 +23,7 @@ type Neuron = {
     activation: number;
     stimulation?: number;
     firing: boolean;
+    lastFired?: number;
     connections: Array<Connection>;
 };
 
@@ -111,6 +112,7 @@ class App extends Component {
                 // if threshold reached, fire
                 neuron.firing = true;
                 neuron.activation = 0;
+                neuron.lastFired = Date.now();
                 neuron.connections.forEach((connection) => {
                     // add signal to connection
                     connection.signals.push({
@@ -248,10 +250,12 @@ class App extends Component {
             });
 
             neuron.connections.forEach((connection) => {
-                graph.links.push({
-                    source: neuron.name,
-                    target: connection.destination,
-                });
+                if (neurons.has(connection.destination)) {
+                    graph.links.push({
+                        source: neuron.name,
+                        target: connection.destination,
+                    });
+                }
             });
         });
 
@@ -266,67 +270,63 @@ class App extends Component {
 
     render() {
         return (
-            <div className="App">
-                <div className="App-neuronArea">
-                    <div className="App-neuronStack">
-                        {Array.from(this.state.neurons.values()).map((v, k) => (
-                            <NeuronComponent key={k} neuron={v} />
-                        ))}
-                    </div>
-                    <GraphComponent
-                        graph={this.state.graph}
-                        neurons={this.state.neurons}
-                    />
-                </div>
-
-                {/* <div className="App-logo">
-                    <p>
-                        <strong>
-                            <a class="title" href="?e=">
-                                re-TEC
-                            </a>
-                        </strong>
-                    </p>
-                </div> */}
-
-                <div className="App-control">
-                    <form>
+            <div className='App'>
+                <div className='App-controlColumn'>
+                    <div>
                         <textarea
-                            className="App-entryArea App-textArea"
+                            className='App-entryArea App-textArea'
                             rows={this.state.rows}
                             value={this.state.value}
                             onChange={this.handleChange}
                         />
+                    </div>
+                    {/* <div className='App-control-description'>
+                        <p>
+                            Define nodes like this: [name] [threshold]
+                            [self-stimulation-period] &gt; [destination]
+                            [distance]
+                        </p>
+                        <p>Note names will emit sounds.</p>
+                        <p>
+                            For more stimulation, use the form below to enter
+                            node names.
+                        </p>
+                    </div> */}
+                    <div>
                         <textarea
-                            className="App-outputArea App-textArea"
-                            rows={this.state.rows}
-                            value={this.state.output}
-                            readOnly
-                        />
-                    </form>
-                    <p>
-                        Define nodes like this: [name] [threshold]
-                        [self-stimulation-period] &gt; [destination] [distance]
-                    </p>
-                    <p>Note names will emit sounds.</p>
-                    <p>
-                        For more stimulation, use the form below to enter node
-                        names.
-                    </p>
-                    <form>
-                        <textarea
-                            className="App-stimulusArea App-textArea"
+                            className='App-stimulusArea App-textArea'
                             rows={4}
                             value={this.state.stimulus}
                             onChange={this.handleStimulusChange}
                         />
                         <textarea
-                            className="App-statusArea App-textArea"
+                            className='App-statusArea App-textArea'
                             rows={4}
                             value={this.state.status}
                             readOnly
                         />
-                    </form>
+                    </div>
+                </div>
+
+                <div className='App-neuronColumn'>
+                    <div className='App-neuronStack'>
+                        {Array.from(this.state.neurons.values()).map((v, k) => (
+                            <NeuronComponent key={k} neuron={v} />
+                        ))}
+                    </div>
+                </div>
+
+                <div className='App-graphColumn'>
+                    <GraphComponent
+                        graph={this.state.graph}
+                        neurons={this.state.neurons}
+                    />
+                    {/* <textarea
+                        className='App-outputArea App-textArea'
+                        rows={this.state.rows}
+                        value={this.state.output}
+                        readOnly
+                    /> */}
                 </div>
             </div>
         );

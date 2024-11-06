@@ -4,33 +4,25 @@ import SpriteText from 'three-spritetext';
 import React from 'react';
 import { Neuron } from './App';
 import './GraphComponent.css';
+import { SEMANTIC_COLORS } from './constants';
 
 type GraphProps = {
     graph: GraphData;
     neurons: Map<string, Neuron>;
 };
 
-type GraphState = {
-    graph: GraphData;
-    neurons: Map<string, Neuron>;
-};
-
-class GraphComponent extends Component<GraphProps, GraphState> {
+class GraphComponent extends Component<GraphProps> {
     private fgRef: any;
 
     constructor(props) {
         super(props);
-        this.state = {
-            graph: props.graph,
-            neurons: props.neurons,
-        };
         this.fgRef = React.createRef();
     }
 
     componentDidMount() {
         if (this.fgRef.current) {
             const camera = this.fgRef.current.camera();
-            const radius = 300; // Todo: make this dynamic
+            const radius = 200; // Todo: make this dynamic
             let angle = 0;
 
             const animate = () => {
@@ -47,29 +39,39 @@ class GraphComponent extends Component<GraphProps, GraphState> {
         }
     }
 
+    private recentlyFired(nodeId: string): boolean {
+        const FIRING_DISPLAY_MS = 400; // How long to show the firing state
+        const neuron = this.props.neurons.get(nodeId);
+        const timeSinceLastFired = neuron?.lastFired
+            ? Date.now() - neuron.lastFired
+            : Infinity;
+        return timeSinceLastFired < FIRING_DISPLAY_MS;
+    }
+
     render() {
         return (
             <div className='App-graph'>
                 <ForceGraph3D
                     ref={this.fgRef}
-                    graphData={this.state.graph}
+                    graphData={this.props.graph}
                     autoRotate={true}
                     autoRotateSpeed={1.0}
                     nodeLabel={(node) => {
                         const nodeId = node.id as string;
-                        const neuron = this.state.neurons.get(nodeId);
+                        const neuron = this.props.neurons.get(nodeId);
                         return neuron ? neuron.activation.toString() : '';
                     }}
                     nodeColor={(node) => {
                         const nodeId = node.id as string;
-                        const neuron = this.state.neurons.get(nodeId);
-                        return neuron && neuron.firing ? 'orange' : 'white';
+                        return this.recentlyFired(nodeId)
+                            ? SEMANTIC_COLORS.MODULE_FIRED
+                            : SEMANTIC_COLORS.MODULE_TEXT;
                     }}
                     showNavInfo={false}
                     width={240}
-                    height={240}
-                    backgroundColor={'antiquewhite'}
-                    linkColor={'#000000'}
+                    height={320}
+                    backgroundColor={SEMANTIC_COLORS.MODULE_BG}
+                    linkColor={SEMANTIC_COLORS.MODULE_TEXT}
                     linkWidth={1}
                     linkOpacity={0.9}
                     linkDirectionalArrowLength={3.5}
@@ -78,10 +80,11 @@ class GraphComponent extends Component<GraphProps, GraphState> {
                     linkCurvature={0.25}
                     nodeThreeObject={(node) => {
                         const nodeId = node.id as string;
-                        const neuron = this.state.neurons.get(nodeId);
+                        const neuron = this.props.neurons.get(nodeId);
                         const sprite = new SpriteText(neuron && nodeId);
-                        sprite.color =
-                            neuron && neuron.firing ? 'orange' : 'black';
+                        sprite.color = this.recentlyFired(nodeId)
+                            ? SEMANTIC_COLORS.MODULE_FIRED
+                            : SEMANTIC_COLORS.MODULE_TEXT;
                         sprite.textHeight = 12;
                         return sprite;
                     }}
