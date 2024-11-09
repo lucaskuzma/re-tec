@@ -27,6 +27,16 @@ type Neuron = {
     connections: Array<Connection>;
 };
 
+type ToneRow = {
+    notes: Array<string>;
+};
+
+type OutputNeuron = Neuron & {
+    rows: Array<ToneRow>;
+    currentNote: number;
+    currentRow: number;
+};
+
 type State = {
     stimulus: string;
     status: string;
