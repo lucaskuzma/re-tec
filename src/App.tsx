@@ -296,6 +296,12 @@ class App extends Component {
     }
 
     private activateNeuron(neuron: Neuron, command?: string) {
+        neuron.activation++;
+
+        if (neuron.stimulation && neuron.stimulation > 0) {
+            neuron.activation += 1 / neuron.stimulation;
+        }
+
         if (neuron.activation >= neuron.threshold) {
             // if threshold reached, fire
             neuron.firing = true;
@@ -323,10 +329,6 @@ class App extends Component {
         } else {
             // otherwise stop firing
             neuron.firing = false;
-        }
-
-        if (neuron.stimulation && neuron.stimulation > 0) {
-            neuron.activation += 1 / neuron.stimulation;
         }
     }
 
