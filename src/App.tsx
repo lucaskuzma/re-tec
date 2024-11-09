@@ -8,15 +8,13 @@ import GraphComponent from './GraphComponent.tsx';
 
 type Signal = {
     progress: number;
-    note: string;
-    noteIndex: number;
-    rowIndex: number;
     key: number;
 };
 
 type Connection = {
     destination: string;
     length: number;
+    command: string;
     signals: Array<Signal>;
 };
 
@@ -78,14 +76,7 @@ class App extends Component {
             },
         });
 
-        let value = [
-            'a 4 12 › b 2 c 8',
-            'b 9 › c 2 e 7',
-            'c 2 » [c3 c4 c5]',
-            'd 3 › e 3 f 3',
-            'e 3 » [a3 a4 a5]',
-            'f 5 › d 5',
-        ].join('\n');
+        let value = ['a 4 12 › b 2 c 8', 'b 9 › c 2 e 7', 'c 2 » [c3 c4 c5]', 'd 3 › e 3 f 3', 'e 3 » [a3 a4 a5]', 'f 5 › d 5'].join('\n');
 
         this.state = {
             ...App.parseInput(value),
@@ -112,69 +103,22 @@ class App extends Component {
         this.setState({ status: this.state.time % 8 });
 
         const stimuli = this.state.stimulus.split(' ');
-        let sensor = this.state.neurons.get(
-            stimuli[this.state.time % stimuli.length]
-        );
-        if (sensor) sensor.activation++;
+        let stimulatedNeuron = this.state.neurons.get(stimuli[this.state.time % stimuli.length]);
+        if (stimulatedNeuron) this.activateNeuron(stimulatedNeuron);
 
         this.state.neurons.forEach((neuron) => {
-            if (neuron.activation >= neuron.threshold) {
-                // if threshold reached, fire
-                neuron.firing = true;
-                neuron.activation = 0;
-                neuron.lastFired = Date.now();
-
-                // output neurons emit notes
-                if (App.isOutputNeuron(neuron)) {
-                    let outputNeuron = neuron as OutputNeuron;
-                    let note =
-                        outputNeuron.rows[outputNeuron.currentRow].notes[
-                            outputNeuron.currentNote
-                        ];
-                    const regex = /\d+$/;
-                    if (regex.test(note)) {
-                        this.synth.triggerAttackRelease(
-                            note,
-                            '2',
-                            undefined,
-                            0.1
-                        );
-                    }
-                } else {
-                    // otherwise, regular neurons just pass signals
-                    neuron.connections.forEach((connection) => {
-                        // add signal to connection
-                        connection.signals.push({
-                            progress: 0,
-                            key: Math.random(),
-                        });
-                    });
-                }
-            } else {
-                // otherwise stop firing
-                neuron.firing = false;
-            }
-
-            if (neuron.stimulation && neuron.stimulation > 0) {
-                neuron.activation += 1 / neuron.stimulation;
-            }
-
             neuron.connections.forEach((connection) => {
                 connection.signals.forEach((signal) => {
                     signal.progress++;
                     if (signal.progress > connection.length) {
                         // activate destination
-                        let destination = this.state.neurons.get(
-                            connection.destination
-                        );
-                        if (destination) destination.activation++;
+                        let destination = this.state.neurons.get(connection.destination);
+                        if (destination) this.activateNeuron(destination, connection.command);
                         // flag for deletion
                         signal.progress = -1;
                     }
                 });
-                connection.signals = connection.signals.filter(
-                    (signal) => signal.progress >= 0
-                );
+                connection.signals = connection.signals.filter((signal) => signal.progress >= 0);
             });
         });
     }
@@ -191,11 +135,7 @@ class App extends Component {
         Tone.start();
     }
 
-    static createNeuron(
-        name: string,
-        threshold: string,
-        stimulation?: string
-    ): Neuron {
+    static createNeuron(name: string, threshold: string, stimulation?: string): Neuron {
         return {
             name: name,
             threshold: parseInt(threshold),
@@ -212,9 +152,17 @@ class App extends Component {
         while (connectionTokens.length > 1) {
             let destination = connectionTokens.shift();
             let length = connectionTokens.shift();
+            let command = '';
+
+            // check if next token is a command in brackets
+            if (connectionTokens.length > 0 && connectionTokens[0].startsWith('[')) {
+                command = connectionTokens.shift()!.slice(1, -1); // Remove brackets
+            }
+
             const connection = {
                 destination: destination!,
                 length: length ? parseInt(length) : 0,
+                command: command,
                 signals: [],
             } as Connection;
             connections.push(connection);
@@ -235,12 +183,7 @@ class App extends Component {
         return rows;
     }
 
-    static createOutputNeuron(
-        name: string,
-        threshold: string,
-        stimulation?: string,
-        toneString?: string
-    ): OutputNeuron {
+    static createOutputNeuron(name: string, threshold: string, stimulation?: string, toneString?: string): OutputNeuron {
         // Start with base neuron
         const baseNeuron = App.createNeuron(name, threshold, stimulation);
 
@@ -265,12 +208,7 @@ class App extends Component {
             let [neuronString, toneString] = line.split('»');
             if (neuronString) {
                 let [name, threshold, stimulation] = neuronString.split(' ');
-                let neuron = App.createOutputNeuron(
-                    name,
-                    threshold,
-                    stimulation,
-                    toneString
-                );
+                let neuron = App.createOutputNeuron(name, threshold, stimulation, toneString);
                 return neuron;
             }
         } else if (regularNeuronRegex.test(line)) {
@@ -357,17 +295,47 @@ class App extends Component {
         return 'rows' in neuron && 'currentNote' in neuron;
     }
 
+    private activateNeuron(neuron: Neuron, command?: string) {
+        if (neuron.activation >= neuron.threshold) {
+            // if threshold reached, fire
+            neuron.firing = true;
+            neuron.activation = 0;
+            neuron.lastFired = Date.now();
+
+            // output neurons emit notes
+            if (App.isOutputNeuron(neuron)) {
+                let outputNeuron = neuron as OutputNeuron;
+                let note = outputNeuron.rows[outputNeuron.currentRow].notes[outputNeuron.currentNote];
+                const regex = /\d+$/;
+                if (regex.test(note)) {
+                    this.synth.triggerAttackRelease(note, '2', undefined, 0.1);
+                }
+            } else {
+                // otherwise, regular neurons just pass signals
+                neuron.connections.forEach((connection) => {
+                    connection.signals.push({
+                        progress: 0,
+                        key: Math.random(),
+                        command: command || connection.command,
+                    });
+                });
+            }
+        } else {
+            // otherwise stop firing
+            neuron.firing = false;
+        }
+
+        if (neuron.stimulation && neuron.stimulation > 0) {
+            neuron.activation += 1 / neuron.stimulation;
+        }
+    }
+
     render() {
         return (
             <div className='App'>
                 <div className='App-controlColumn'>
                     <div>
-                        <textarea
-                            className='App-entryArea App-textArea'
-                            rows={this.state.rows}
-                            value={this.state.value}
-                            onChange={this.handleChange}
-                        />
+                        <textarea className='App-entryArea App-textArea' rows={this.state.rows} value={this.state.value} onChange={this.handleChange} />
                     </div>
                     {/* <div className='App-control-description'>
                         <p>
@@ -382,38 +350,21 @@ class App extends Component {
                         </p>
                     </div> */}
                     <div>
-                        <textarea
-                            className='App-stimulusArea App-textArea'
-                            rows={4}
-                            value={this.state.stimulus}
-                            onChange={this.handleStimulusChange}
-                        />
-                        <textarea
-                            className='App-statusArea App-textArea'
-                            rows={4}
-                            value={this.state.status}
-                            readOnly
-                        />
+                        <textarea className='App-stimulusArea App-textArea' rows={4} value={this.state.stimulus} onChange={this.handleStimulusChange} />
+                        <textarea className='App-statusArea App-textArea' rows={4} value={this.state.status} readOnly />
                     </div>
                 </div>
 
                 <div className='App-neuronColumn'>
                     <div className='App-neuronStack'>
                         {Array.from(this.state.neurons.values()).map((v, k) => (
-                            <NeuronComponent
-                                key={k}
-                                neuron={v}
-                                isOutput={App.isOutputNeuron(v)}
-                            />
+                            <NeuronComponent key={k} neuron={v} isOutput={App.isOutputNeuron(v)} />
                         ))}
                     </div>
                 </div>
 
                 <div className='App-graphColumn'>
-                    <GraphComponent
-                        graph={this.state.graph}
-                        neurons={this.state.neurons}
-                    />
+                    <GraphComponent graph={this.state.graph} neurons={this.state.neurons} />
                     {/* <textarea
                         className='App-outputArea App-textArea'
                         rows={this.state.rows}
