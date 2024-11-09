@@ -79,15 +79,12 @@ class App extends Component {
         });
 
         let value = [
-            'c4 4 12 › g4 2 x 8',
-            'g4 3 › c4 6 g5 2',
-            'x 2 › c4 2',
-            'g5 3 › y 3',
-            'y 2 24 › c4 2 z 1',
-            'z 2 › g3 1 c5 3',
-            'g3 1 › y 2',
-            'c5 2 › y 8 f4 3',
-            'f4 2 › c4 18',
+            'a 4 12 › b 2 c 8',
+            'b 9 › c 2 e 7',
+            'c 2 » [c3 c4 c5]',
+            'd 3 › e 3 f 3',
+            'e 3 » [a3 a4 a5]',
+            'f 5 › d 5',
         ].join('\n');
 
         this.state = {
