@@ -125,7 +125,7 @@ class App extends Component {
                 neuron.lastFired = Date.now();
 
                 // output neurons emit notes
-                if ('rows' in neuron && 'currentNote' in neuron) {
+                if (App.isOutputNeuron(neuron)) {
                     let outputNeuron = neuron as OutputNeuron;
                     let note =
                         outputNeuron.rows[outputNeuron.currentRow].notes[
@@ -353,6 +353,10 @@ class App extends Component {
         };
     }
 
+    static isOutputNeuron(neuron: Neuron): neuron is OutputNeuron {
+        return 'rows' in neuron && 'currentNote' in neuron;
+    }
+
     render() {
         return (
             <div className='App'>
@@ -396,7 +400,11 @@ class App extends Component {
                 <div className='App-neuronColumn'>
                     <div className='App-neuronStack'>
                         {Array.from(this.state.neurons.values()).map((v, k) => (
-                            <NeuronComponent key={k} neuron={v} />
+                            <NeuronComponent
+                                key={k}
+                                neuron={v}
+                                isOutput={App.isOutputNeuron(v)}
+                            />
                         ))}
                     </div>
                 </div>

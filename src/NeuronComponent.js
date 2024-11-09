@@ -15,7 +15,7 @@ class NeuronComponent extends Component {
             <div
                 className={`Neuron ${
                     this.props.neuron.firing ? 'firing-bg' : ''
-                }`}
+                } ${this.props.isOutput ? 'output-neuron' : ''}`}
             >
                 {/* {this.props.neuron.firing ? <span>🔥</span> : <span>🧠</span>}{' '} */}
                 {this.props.neuron.name}

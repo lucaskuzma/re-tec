@@ -1,6 +1,6 @@
 :root {
   --toy-orange: #FF661F;
-  --toy-yellow: #FFE81F;
+  --toy-yellow: #FFB81F;
   --toy-blue: #0066FF;
   --toy-white: #FFFFFF;
   --toy-black: #1A1A1A;
@@ -60,7 +60,7 @@ form {
   background-color: var(--module-bg);
   border-radius: 4px;
   border: 2px solid var(--module-text);
-  box-shadow: 4px 4px 0 var(--module-shadow-primary);
+  box-shadow: 4px 4px 0 var(--module-shadow-tertiary);
   font-family: inherit;
   margin-bottom: 6px;
 }
@@ -77,7 +77,7 @@ form {
   background-color: var(--module-bg);
   border-radius: 4px;
   border: 2px solid var(--module-text);
-  box-shadow: 4px 4px 0 var(--module-shadow-secondary);
+  box-shadow: 4px 4px 0 var(--module-shadow-tertiary);
 }
   
 .App-neuronColumn {
@@ -113,7 +113,7 @@ form {
 .App-graph {
   background-color: var(--module-bg);
   border-radius: 4px;
-  border: 2px solid var(--module-text);
-  box-shadow: 4px 4px 0 var(--module-shadow-primary);
+  border: 2px solid var(--module-shadow-tertiary);
+  box-shadow: 4px 4px 0 var(--module-shadow-tertiary);
   max-height: 320px;
 }
