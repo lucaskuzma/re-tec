@@ -89,7 +89,7 @@ class App extends Component {
 
         this.state = {
             ...App.parseInput(value),
-            stimulus: '. . . y . .',
+            stimulus: '. . . f . .',
             status: 'ok',
             time: 0,
         };
@@ -125,11 +125,13 @@ class App extends Component {
                 neuron.lastFired = Date.now();
 
                 // output neurons emit notes
-                if (neuron instanceof OutputNeuron) {
+                if ('rows' in neuron && 'currentNote' in neuron) {
+                    let outputNeuron = neuron as OutputNeuron;
                     let note =
-                        neuron.rows[neuron.currentRow].notes[
-                            neuron.currentNote
+                        outputNeuron.rows[outputNeuron.currentRow].notes[
+                            outputNeuron.currentNote
                         ];
+                    const regex = /\d+$/;
                     if (regex.test(note)) {
                         this.synth.triggerAttackRelease(
                             note,
