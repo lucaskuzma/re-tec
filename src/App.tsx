@@ -8,6 +8,9 @@ import GraphComponent from './GraphComponent.tsx';
 
 type Signal = {
     progress: number;
+    note: string;
+    noteIndex: number;
+    rowIndex: number;
     key: number;
 };
 
@@ -76,15 +79,15 @@ class App extends Component {
         });
 
         let value = [
-            'c4 4 12 > g4 2 x 8',
-            'g4 3 > c4 6 g5 2',
-            'x 2 > c4 2',
-            'g5 3 > y 3',
-            'y 2 24 > c4 2 z 1',
-            'z 2 > g3 1 c5 3',
-            'g3 1 > y 2',
-            'c5 2 > y 8 f4 3',
-            'f4 2 > c4 18',
+            'c4 4 12 › g4 2 x 8',
+            'g4 3 › c4 6 g5 2',
+            'x 2 › c4 2',
+            'g5 3 › y 3',
+            'y 2 24 › c4 2 z 1',
+            'z 2 › g3 1 c5 3',
+            'g3 1 › y 2',
+            'c5 2 › y 8 f4 3',
+            'f4 2 › c4 18',
         ].join('\n');
 
         this.state = {
@@ -176,38 +179,98 @@ class App extends Component {
         Tone.start();
     }
 
-    static parse(line: string): Neuron | undefined {
-        // c4 12 2 > e4 12 c4 12
-        const regex = /\w+\s\d+(\s\d*)*\s>(\s\w+\s\d+)+/;
-        if (!regex.test(line)) return undefined;
+    static createNeuron(
+        name: string,
+        threshold: string,
+        stimulation?: string
+    ): Neuron {
+        return {
+            name: name,
+            threshold: parseInt(threshold),
+            activation: 0,
+            stimulation: stimulation ? parseInt(stimulation) : undefined,
+            firing: false,
+            connections: [],
+        };
+    }
 
-        let [neuronString, connectionString] = line.split('>');
-        if (neuronString) {
-            let [name, threshold, stimulation] = neuronString.split(' ');
-            let neuron: Neuron;
-            neuron = {
-                name: name,
-                threshold: parseInt(threshold),
-                activation: 0,
-                stimulation: stimulation ? parseInt(stimulation) : undefined,
-                firing: false,
-                connections: [] as Connection[],
-            };
-            neuron.connections = [];
-            let connectionTokens = connectionString.trim().split(' ');
-            while (connectionTokens.length > 1) {
-                let destination = connectionTokens.shift();
-                let distance = connectionTokens.shift();
-                const connection = {
-                    destination: destination,
-                    length: distance && parseInt(distance),
-                    signals: [],
-                } as Connection;
-                neuron.connections.push(connection);
-            }
-            return neuron;
+    static parseConnections(connectionString: string): Connection[] {
+        const connections: Connection[] = [];
+        let connectionTokens = connectionString.trim().split(' ');
+        while (connectionTokens.length > 1) {
+            let destination = connectionTokens.shift();
+            let length = connectionTokens.shift();
+            const connection = {
+                destination: destination!,
+                length: length ? parseInt(length) : 0,
+                signals: [],
+            } as Connection;
+            connections.push(connection);
         }
-        return undefined;
+        return connections;
+    }
+
+    static parseToneRows(toneString: string): ToneRow[] {
+        const rows: ToneRow[] = [];
+        const rowMatches = toneString.match(/\[(.*?)\]/g) || [];
+
+        for (const match of rowMatches) {
+            // Remove brackets and split by spaces
+            const notes = match.slice(1, -1).split(' ');
+            rows.push({ notes });
+        }
+
+        return rows;
+    }
+
+    static createOutputNeuron(
+        name: string,
+        threshold: string,
+        stimulation?: string,
+        toneString?: string
+    ): OutputNeuron {
+        // Start with base neuron
+        const baseNeuron = App.createNeuron(name, threshold, stimulation);
+
+        // Add output-specific properties
+        return {
+            ...baseNeuron,
+            rows: toneString ? App.parseToneRows(toneString) : [],
+            currentNote: 0,
+            currentRow: 0,
+        };
+    }
+
+    static parse(line: string): Neuron | undefined {
+        // regular neurons: "name threshold [stimulation] › dest1 len1 dest2 len2"
+        const regularNeuronRegex = /\w+\s\d+(\s\d*)*\s›(\s\w+\s\d+)+/;
+
+        // output neurons: "name threshold [stimulation] » [note1 note2] [note3 note4]"
+        const outputNeuronRegex = /\w+\s\d+(\s\d*)*\s»\s*(\[[\w#\d\s]+\])*\s*/;
+
+        if (outputNeuronRegex.test(line)) {
+            // output neuron
+            let [neuronString, toneString] = line.split('»');
+            if (neuronString) {
+                let [name, threshold, stimulation] = neuronString.split(' ');
+                let neuron = App.createOutputNeuron(
+                    name,
+                    threshold,
+                    stimulation,
+                    toneString
+                );
+                return neuron;
+            }
+        } else if (regularNeuronRegex.test(line)) {
+            // regular neuron
+            let [neuronString, connectionString] = line.split('›');
+            if (neuronString) {
+                let [name, threshold, stimulation] = neuronString.split(' ');
+                let neuron = App.createNeuron(name, threshold, stimulation);
+                neuron.connections = App.parseConnections(connectionString);
+                return neuron;
+            }
+        } else return undefined;
     }
 
     static describe(neuron: Neuron) {
@@ -294,7 +357,7 @@ class App extends Component {
                         <p>
                             Define nodes like this: [name] [threshold]
                             [self-stimulation-period] &gt; [destination]
-                            [distance]
+                            [length]
                         </p>
                         <p>Note names will emit sounds.</p>
                         <p>
