@@ -123,17 +123,30 @@ class App extends Component {
                 neuron.firing = true;
                 neuron.activation = 0;
                 neuron.lastFired = Date.now();
-                neuron.connections.forEach((connection) => {
-                    // add signal to connection
-                    connection.signals.push({
-                        progress: 0,
-                        key: Math.random(),
+
+                // output neurons emit notes
+                if (neuron instanceof OutputNeuron) {
+                    let note =
+                        neuron.rows[neuron.currentRow].notes[
+                            neuron.currentNote
+                        ];
+                    if (regex.test(note)) {
+                        this.synth.triggerAttackRelease(
+                            note,
+                            '2',
+                            undefined,
+                            0.1
+                        );
+                    }
+                } else {
+                    // otherwise, regular neurons just pass signals
+                    neuron.connections.forEach((connection) => {
+                        // add signal to connection
+                        connection.signals.push({
+                            progress: 0,
+                            key: Math.random(),
+                        });
                     });
-                });
-                const regex = /\d+$/;
-                if (regex.test(neuron.name)) {
-                    const note = neuron.name;
-                    this.synth.triggerAttackRelease(note, '2', undefined, 0.1);
                 }
             } else {
                 // otherwise stop firing
