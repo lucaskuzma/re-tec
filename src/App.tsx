@@ -334,26 +334,24 @@ class App extends Component {
             }
         }
 
-        // Handle note changes
+        // Handle note changes without playing
         if (parsed.note !== null) {
             const currentRowLength = outputNeuron.rows[outputNeuron.currentRow].notes.length;
 
             switch (parsed.note) {
                 case 'n':
                     outputNeuron.currentNote = (outputNeuron.currentNote + 1) % currentRowLength;
-                    this.playCurrentNote(outputNeuron);
                     break;
                 case 'p':
                     outputNeuron.currentNote = (outputNeuron.currentNote - 1 + currentRowLength) % currentRowLength;
                     break;
                 case 'c':
-                    this.playCurrentNote(outputNeuron);
+                    // Do nothing - note will play when neuron fires
                     break;
                 default:
                     const noteNum = parseInt(parsed.note);
                     if (!isNaN(noteNum)) {
                         outputNeuron.currentNote = noteNum % currentRowLength;
-                        this.playCurrentNote(outputNeuron);
                     }
             }
         }
