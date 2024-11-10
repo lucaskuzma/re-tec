@@ -81,11 +81,19 @@ class App extends Component {
             },
         });
 
-        let value = ['a 4 12 › b 2 c 8', 'b 9 › c 2 e 7', 'c 2 » [c3 c4 c5]', 'd 3 › e 3 f 3', 'e 3 » [a3 a4 a5]', 'f 5 › d 5'].join('\n');
+        // prettier-ignore
+        let value = [
+            'a 4 12 › b 2 c 8 [n]',
+            'b 9 › c 2 e 7 [c,n]',
+            'c 2 » [c3 c4 c5] [d3 d4 d5]',
+            'd 3 › e 3 f 3 e 2 [,n]',
+            'e 3 » [c4 e4 g4] [d4 f4 a4] [e4 g4 b3]',
+            'f 5 › d 5 e 2 [n]',
+        ].join('\n');
 
         this.state = {
             ...App.parseInput(value),
-            stimulus: '. . . f . .',
+            stimulus: 'a . . f . .',
             status: 'ok',
             time: 0,
         };
