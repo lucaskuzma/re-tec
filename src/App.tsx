@@ -36,6 +36,7 @@ type OutputNeuron = Neuron & {
     rows: Array<ToneRow>;
     currentNote: number;
     currentRow: number;
+    currentDuration: string;
 };
 
 type State = {
@@ -52,6 +53,7 @@ type State = {
 type Command = {
     note: string | null; // null means no change
     row: string | null; // null means no change
+    duration: string | null; // null means no change
 };
 
 class App extends Component {
@@ -88,8 +90,9 @@ class App extends Component {
             'c 2 » [c3 c4 c5] [d3 d4 d5]',
             'd 3 › a 3 e 2 [,n]',
             'e 3 » [c4 e4 g4] [d4 f4 a4] [e4 g4 b3]',
-            'f 5 › d 5 e 2 [n]',
-            'g 4 › e 6 [,n] c 4 [n]',
+            'f 5 › d 5 e 2 [n] h 1 g 2',
+            'g 4 › e 6 [,n] c 4 [n,c,1n]',
+            'h 2 › c 4 [,,16n]',
         ].join('\n');
 
         this.state = {
@@ -207,6 +210,7 @@ class App extends Component {
             rows: toneString ? App.parseToneRows(toneString) : [],
             currentNote: 0,
             currentRow: 0,
+            currentDuration: '1n',
         };
     }
 
@@ -314,6 +318,7 @@ class App extends Component {
         return {
             note: parts[0] ? parts[0].trim() : null,
             row: parts[1] ? parts[1].trim() : null,
+            duration: parts[2] ? parts[2].trim() : null,
         };
     }
 
@@ -355,13 +360,18 @@ class App extends Component {
                     }
             }
         }
+
+        // Handle duration changes
+        if (parsed.duration !== null) {
+            outputNeuron.currentDuration = parsed.duration;
+        }
     }
 
     private playCurrentNote(outputNeuron: OutputNeuron) {
         const note = outputNeuron.rows[outputNeuron.currentRow].notes[outputNeuron.currentNote];
         const regex = /\d+$/;
         if (regex.test(note)) {
-            this.synth.triggerAttackRelease(note, '2', undefined, 0.1);
+            this.synth.triggerAttackRelease(note, outputNeuron.currentDuration, undefined, 0.1);
         }
     }
 
