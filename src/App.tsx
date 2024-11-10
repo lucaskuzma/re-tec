@@ -49,6 +49,11 @@ type State = {
     graph: GraphData;
 };
 
+type Command = {
+    note: string | null; // null means no change
+    row: string | null; // null means no change
+};
+
 class App extends Component {
     timer: NodeJS.Timer;
     state: State = {
@@ -295,6 +300,65 @@ class App extends Component {
         return 'rows' in neuron && 'currentNote' in neuron;
     }
 
+    static parseCommand(commandStr: string): Command {
+        const parts = commandStr.trim().split(',');
+        return {
+            note: parts[0] ? parts[0].trim() : null,
+            row: parts[1] ? parts[1].trim() : null,
+        };
+    }
+
+    private handleOutputCommand(outputNeuron: OutputNeuron, command: string) {
+        const parsed = App.parseCommand(command);
+
+        // Handle row changes
+        if (parsed.row !== null) {
+            if (parsed.row === 'n') {
+                outputNeuron.currentRow = (outputNeuron.currentRow + 1) % outputNeuron.rows.length;
+            } else if (parsed.row === 'p') {
+                outputNeuron.currentRow = (outputNeuron.currentRow - 1 + outputNeuron.rows.length) % outputNeuron.rows.length;
+            } else {
+                const rowNum = parseInt(parsed.row);
+                if (!isNaN(rowNum)) {
+                    outputNeuron.currentRow = rowNum % outputNeuron.rows.length;
+                }
+            }
+        }
+
+        // Handle note changes
+        if (parsed.note !== null) {
+            const currentRowLength = outputNeuron.rows[outputNeuron.currentRow].notes.length;
+
+            switch (parsed.note) {
+                case 'n':
+                    outputNeuron.currentNote = (outputNeuron.currentNote + 1) % currentRowLength;
+                    this.playCurrentNote(outputNeuron);
+                    break;
+                case 'p':
+                    outputNeuron.currentNote = (outputNeuron.currentNote - 1 + currentRowLength) % currentRowLength;
+                    this.playCurrentNote(outputNeuron);
+                    break;
+                case 'c':
+                    this.playCurrentNote(outputNeuron);
+                    break;
+                default:
+                    const noteNum = parseInt(parsed.note);
+                    if (!isNaN(noteNum)) {
+                        outputNeuron.currentNote = noteNum % currentRowLength;
+                        this.playCurrentNote(outputNeuron);
+                    }
+            }
+        }
+    }
+
+    private playCurrentNote(outputNeuron: OutputNeuron) {
+        const note = outputNeuron.rows[outputNeuron.currentRow].notes[outputNeuron.currentNote];
+        const regex = /\d+$/;
+        if (regex.test(note)) {
+            this.synth.triggerAttackRelease(note, '2', undefined, 0.1);
+        }
+    }
+
     private activateNeuron(neuron: Neuron, command?: string) {
         neuron.activation++;
 
@@ -310,11 +374,10 @@ class App extends Component {
 
             // output neurons emit notes
             if (App.isOutputNeuron(neuron)) {
-                let outputNeuron = neuron as OutputNeuron;
-                let note = outputNeuron.rows[outputNeuron.currentRow].notes[outputNeuron.currentNote];
-                const regex = /\d+$/;
-                if (regex.test(note)) {
-                    this.synth.triggerAttackRelease(note, '2', undefined, 0.1);
+                if (command) {
+                    this.handleOutputCommand(neuron, command);
+                } else {
+                    this.playCurrentNote(neuron);
                 }
             } else {
                 // otherwise, regular neurons just pass signals
@@ -322,7 +385,7 @@ class App extends Component {
                     connection.signals.push({
                         progress: 0,
                         key: Math.random(),
-                        command: command || connection.command,
+                        command: connection.command,
                     });
                 });
             }
