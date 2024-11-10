@@ -83,12 +83,13 @@ class App extends Component {
 
         // prettier-ignore
         let value = [
-            'a 4 12 › b 2 c 8 [n]',
-            'b 9 › c 2 e 7 [c,n]',
+            'a 4 12 › b 2 c 8 [n,n]',
+            'b 9 › c 2 e 7 [c,n] g 2',
             'c 2 » [c3 c4 c5] [d3 d4 d5]',
-            'd 3 › e 3 f 3 e 2 [,n]',
+            'd 3 › a 3 e 2 [,n]',
             'e 3 » [c4 e4 g4] [d4 f4 a4] [e4 g4 b3]',
             'f 5 › d 5 e 2 [n]',
+            'g 4 › e 6 [,n] c 4 [n]',
         ].join('\n');
 
         this.state = {
@@ -344,7 +345,6 @@ class App extends Component {
                     break;
                 case 'p':
                     outputNeuron.currentNote = (outputNeuron.currentNote - 1 + currentRowLength) % currentRowLength;
-                    this.playCurrentNote(outputNeuron);
                     break;
                 case 'c':
                     this.playCurrentNote(outputNeuron);
@@ -368,6 +368,11 @@ class App extends Component {
     }
 
     private activateNeuron(neuron: Neuron, command?: string) {
+        // handle commands immediately when neuron is activated
+        if (App.isOutputNeuron(neuron) && command) {
+            this.handleOutputCommand(neuron, command);
+        }
+
         neuron.activation++;
 
         if (neuron.stimulation && neuron.stimulation > 0) {
@@ -380,20 +385,15 @@ class App extends Component {
             neuron.activation = 0;
             neuron.lastFired = Date.now();
 
-            // output neurons emit notes
+            // output neurons emit notes only when firing
             if (App.isOutputNeuron(neuron)) {
-                if (command) {
-                    this.handleOutputCommand(neuron, command);
-                } else {
-                    this.playCurrentNote(neuron);
-                }
+                this.playCurrentNote(neuron);
             } else {
-                // otherwise, regular neurons just pass signals
+                // regular neurons just pass signals
                 neuron.connections.forEach((connection) => {
                     connection.signals.push({
                         progress: 0,
                         key: Math.random(),
-                        command: connection.command,
                     });
                 });
             }
