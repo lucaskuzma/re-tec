@@ -75,7 +75,7 @@ class App extends Component {
         this.synth = new Tone.PolySynth().toDestination();
         this.synth.set({
             oscillator: {
-                type: 'sine',
+                type: 'fatsine',
             },
             envelope: {
                 decay: 1,
@@ -93,7 +93,7 @@ class App extends Component {
             'f 5 › d 5 e 2 [n] h 1 [n,c,16n] g 2',
             'g 4 › e 6 [,n] c 4 [n,c,1n]',
             'h 4 » [a2 e2 f3]',
-            'i 2 › c 4 [,,16n] i 8',
+            'i 2 › c 4 [,,16n] h 8 [n,c,8n]',
             'j 3 › f 3 c 3 [n,c,4n]',
         ].join('\n');
 
