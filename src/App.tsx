@@ -87,17 +87,19 @@ class App extends Component {
         let value = [
             'a 4 12 › b 2 c 8 [n,n]',
             'b 9 › c 2 e 7 [c,n] g 2',
-            'c 2 » [c3 c4 c5] [d3 d4 d5]',
-            'd 3 › a 3 e 2 [,n]',
-            'e 3 » [c4 e4 g4] [d4 f4 a4] [e4 g4 b3]',
+            'c 2 » [e3 e4 e5] [b3 b4 b5]',
+            'd 3 › a 3 e 2 [,n] j 12',
+            'e 3 » [e4 f4 g#4 a4] [b5 c5 d5 e5] [e2 f3 g#4]',
             'f 5 › d 5 e 2 [n] h 1 g 2',
             'g 4 › e 6 [,n] c 4 [n,c,1n]',
-            'h 2 › c 4 [,,16n]',
+            'h 2 › c 4 [,,16n] i 8',
+            'i 3 › f 3 c 3 [n,c,4n]',
+            'j 1 › d 9 e 3 [,,8n]',
         ].join('\n');
 
         this.state = {
             ...App.parseInput(value),
-            stimulus: 'a . . f . .',
+            stimulus: 'a . . f . . b i i j b g . . . . h d d h .',
             status: 'ok',
             time: 0,
         };
