@@ -10,9 +10,43 @@ Sounds are generated using (Tone.js)[https://tonejs.github.io]. You might have t
 
 Define nodes like this:
 
-    [name] [threshold] [self-stimulation-period] > [destination] [distance]
+```typescript
+// Basic neuron syntax:
+'name threshold [stimulation] › destination1 length1 [command] destination2 length2 [command] ...';
 
-If node names are note names, like `c3`, they will emit sounds.
+// Output neuron syntax:
+'name threshold [stimulation] » [note1 note2 ...] [note1 note2 ...]';
+
+// Examples explained:
+'a 4 12 › b 2 c 8 [n,n]'; // Regular neuron 'a': threshold 4, self-stimulation 12
+// Connects to 'b' (length 2) and 'c' (length 8) with command [n,n]
+
+'c 2 » [e3 e4 e5] [b3 b4 b5]'; // Output neuron 'c': threshold 2
+// Has two tone rows: [e3 e4 e5] and [b3 b4 b5]
+```
+
+Key elements:
+
+1. **Regular Neurons**:
+
+    - `name`: Logical identifier
+    - `threshold`: Number of activations needed to fire
+    - `stimulation`: (optional) Self-stimulation period
+    - `›`: Indicates connections follow
+    - Connections consist of:
+        - `destination`: Target neuron name
+        - `length`: Connection length (delay)
+        - `[command]`: Optional command in format `[note,row,duration]`
+            - `n`: Next
+            - `p`: Previous
+            - `c`: Current
+            - Numbers: Absolute position
+
+2. **Output Neurons**:
+    - Marked with `»` instead of `›`
+    - Followed by tone rows in brackets
+    - Each `[...]` represents a different row of notes
+    - Notes use standard musical notation (e.g., 'e4' = E in octave 4)
 
 There is also a basic sequencer which cycles through the words in the bottom text field. If any of these match a node name, that node will be stimulated.
 

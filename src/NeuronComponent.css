@@ -1,11 +1,11 @@
 .Neuron {
     background-color: var(--module-bg);
-    border: 2px solid var(--module-text);
+    border: 2px solid var(--module-shadow-primary);
     border-radius: 4px;
     padding: 8px;
     margin-bottom: 12px;
     color: var(--module-text);
-    box-shadow: 4px 4px 0 var(--module-shadow-tertiary);
+    box-shadow: 4px 4px 0 var(--module-shadow-primary);
     transition: all 0.2s ease;
     font-family: inherit;
     font-size: inherit;
@@ -13,4 +13,10 @@
 
 .Neuron.firing-bg {
     background-color: var(--firing-bg);
+}
+
+
+.Neuron.output-neuron {
+    border: 2px solid var(--module-shadow-secondary);
+    box-shadow: 4px 4px 0 var(--module-shadow-secondary);
 }
