@@ -125,7 +125,15 @@ class App extends Component {
         let stimulatedNeuron = this.state.neurons.get(stimuli[this.state.time % stimuli.length]);
         if (stimulatedNeuron) this.activateNeuron(stimulatedNeuron);
 
+        // Add self-stimulation for all neurons
         this.state.neurons.forEach((neuron) => {
+            if (neuron.stimulation && neuron.stimulation > 0) {
+                neuron.activation += 1 / neuron.stimulation;
+                if (neuron.activation >= neuron.threshold) {
+                    this.activateNeuron(neuron);
+                }
+            }
+
             neuron.connections.forEach((connection) => {
                 connection.signals.forEach((signal) => {
                     signal.progress++;
@@ -384,10 +392,6 @@ class App extends Component {
         }
 
         neuron.activation++;
-
-        if (neuron.stimulation && neuron.stimulation > 0) {
-            neuron.activation += 1 / neuron.stimulation;
-        }
 
         if (neuron.activation >= neuron.threshold) {
             // if threshold reached, fire

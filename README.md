@@ -41,6 +41,7 @@ Key elements:
             - `p`: Previous
             - `c`: Current
             - Numbers: Absolute position
+            - Duration uses Tone.js format: `16n`, `8n`, etc.
 
 2. **Output Neurons**:
     - Marked with `»` instead of `›`
